@@ -235,7 +235,7 @@ namespace CYS.Controllers
 			List<Kriter> ustKategoriList = new List<Kriter>();
 			List<SelectListItem> itList = new List<SelectListItem>();
 			ustKategoriCTX hctx = new ustKategoriCTX();
-			var kriterListesi = kritCTX.kriterList("select * from kriter", null);
+			var kriterListesi = kritCTX.kriterList("select * from Kriter", null);
 			foreach (var item in kriterListesi)
 			{
 				SelectListItem it = new SelectListItem() { Value = item.id.ToString(), Text = item.kriterAdi };
