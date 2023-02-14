@@ -1,10 +1,10 @@
-"use strict";
+﻿"use strict";
 
 // Class definition
-var KTUsersAddUser = function () {
+var KTKritAdd = function () {
     // Shared variables
-    const element = document.getElementById('kt_modal_add_user');
-    const form = element.querySelector('#kt_modal_add_user_form');
+    const element = document.getElementById('kt_modal_add_user_ozellik');
+    const form = element.querySelector('#kt_modal_add_user_form_ozellik');
     const modal = new bootstrap.Modal(element);
 
     // Init add schedule modal
@@ -13,23 +13,9 @@ var KTUsersAddUser = function () {
         // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
         var validator = FormValidation.formValidation(
             form,
+
             {
-                fields: {
-                    'user_name': {
-                        validators: {
-                            notEmpty: {
-                                message: 'RFID bilgisini girin'
-                            }
-                        }
-                    },
-                    'user_email': {
-                        validators: {
-                            notEmpty: {
-                                message: 'Hayvanin adini girin'
-                            }
-                        }
-                    },
-                },
+               
 
                 plugins: {
                     trigger: new FormValidation.plugins.Trigger(),
@@ -41,9 +27,8 @@ var KTUsersAddUser = function () {
                 }
             }
         );
-
         // Submit button handler
-        const submitButton = element.querySelector('[data-kt-users-modal-action="submit"]');
+        const submitButton = element.querySelector('[data-kt-users-modal-action-ozellik="submit"]');
         submitButton.addEventListener('click', e => {
             e.preventDefault();
 
@@ -58,22 +43,24 @@ var KTUsersAddUser = function () {
 
                         // Disable button to avoid multiple click 
                         submitButton.disabled = true;
-                        var altturId = form.querySelector('[name="altTur"]').value
-                        console.log("Value: " + altturId);
 
                         // Simulate form submission. For more info check the plugin's official documentation: https://sweetalert2.github.io/
                         setTimeout(function () {
                             // Remove loading indication
                             submitButton.removeAttribute('data-kt-indicator');
+                            var kriterId = form.querySelector('[name="kriter"]').value;
+                            var element = document.getElementById("lblOzellik");
+                            var unsurId = element.options[element.selectedIndex].value;
+                            var hayvanId = form.querySelector('[name="hayvanIdName"]').value;
 
                             // Enable button
                             submitButton.disabled = false;
-
                             $.ajax({
-                                url: "/Hayvan/hayvanEkleJson/",
+                                url: "/Hayvan/HayvanOzellikEkleJson/",
                                 type: "POST",
                                 data: {
-                                    "rfid": form.querySelector('[name="user_name"]').value, "hayvanAdi": form.querySelector('[name="user_email"]').value, "cinsiyet": form.querySelector('input[name="user_role"]:checked').value, "altTurId": altturId
+                                    "kriterId": kriterId, "unsurId" : unsurId, "hayvanId" : hayvanId
+
                                 },
                                 success: function (returnData) {
 
@@ -86,22 +73,23 @@ var KTUsersAddUser = function () {
                                             confirmButtonText: "Tekrar Eklemeyi dene!",
                                             customClass: {
                                                 confirmButton: "btn btn-primary"
+
                                             }
                                         });
 
-                                    }
-                                    else {
+                                    } else {
                                         Swal.fire({
                                             text: returnData["message"],
                                             icon: "success",
                                             buttonsStyling: false,
                                             customClass: {
                                                 confirmButton: "btn btn-primary"
+
                                             }
                                         }).then(function (result) {
                                             if (result.isConfirmed) {
-                                                form.querySelector('[name="email"]').value = "";
-                                                form.querySelector('[name="password"]').value = "";
+                                                //form.querySelector('[name="email"]').value = "";
+                                                //form.querySelector('[name="password"]').value = "";
                                                 //form.submit(); // submit form
                                             }
                                         });
@@ -129,17 +117,17 @@ var KTUsersAddUser = function () {
                                 }
                             });
 
-                            
+
 
                             //form.submit(); // Submit form
                         }, 2000);
-                    } 
+                    }
                 });
             }
         });
 
         // Cancel button handler
-        const cancelButton = element.querySelector('[data-kt-users-modal-action="cancel"]');
+        const cancelButton = element.querySelector('[data-kt-users-modal-action-ozellik="cancel"]');
         cancelButton.addEventListener('click', e => {
             e.preventDefault();
 
@@ -149,10 +137,11 @@ var KTUsersAddUser = function () {
                 showCancelButton: true,
                 buttonsStyling: false,
                 confirmButtonText: "Evet!",
-                cancelButtonText: "Hay�r, geri don!",
+                cancelButtonText: "Hayır, geri don!",
                 customClass: {
                     confirmButton: "btn btn-primary",
                     cancelButton: "btn btn-active-light"
+
                 }
             }).then(function (result) {
                 if (result.value) {
@@ -173,7 +162,7 @@ var KTUsersAddUser = function () {
         });
 
         // Close button handler
-        const closeButton = element.querySelector('[data-kt-users-modal-action="close"]');
+        const closeButton = element.querySelector('[data-kt-users-modal-action-ozellik="close"]');
         closeButton.addEventListener('click', e => {
             e.preventDefault();
 
@@ -187,6 +176,7 @@ var KTUsersAddUser = function () {
                 customClass: {
                     confirmButton: "btn btn-primary",
                     cancelButton: "btn btn-active-light"
+
                 }
             }).then(function (result) {
                 if (result.value) {
@@ -217,5 +207,5 @@ var KTUsersAddUser = function () {
 
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
-    KTUsersAddUser.init();
+    KTKritAdd.init();
 });

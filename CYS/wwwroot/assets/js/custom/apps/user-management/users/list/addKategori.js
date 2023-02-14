@@ -1,10 +1,10 @@
-"use strict";
+﻿"use strict";
 
 // Class definition
 var KTUsersAddUser = function () {
     // Shared variables
-    const element = document.getElementById('kt_modal_add_user');
-    const form = element.querySelector('#kt_modal_add_user_form');
+    const element = document.getElementById('kt_modal_add_user_kat');
+    const form = element.querySelector('#kt_modal_add_user_form_kat');
     const modal = new bootstrap.Modal(element);
 
     // Init add schedule modal
@@ -15,20 +15,14 @@ var KTUsersAddUser = function () {
             form,
             {
                 fields: {
-                    'user_name': {
+                    'ustKategoriName': {
                         validators: {
                             notEmpty: {
-                                message: 'RFID bilgisini girin'
+                                message: 'Kategori İsmini Girin...'
                             }
                         }
                     },
-                    'user_email': {
-                        validators: {
-                            notEmpty: {
-                                message: 'Hayvanin adini girin'
-                            }
-                        }
-                    },
+
                 },
 
                 plugins: {
@@ -41,9 +35,8 @@ var KTUsersAddUser = function () {
                 }
             }
         );
-
         // Submit button handler
-        const submitButton = element.querySelector('[data-kt-users-modal-action="submit"]');
+        const submitButton = element.querySelector('[data-kt-users-modal-action-kat="submit"]');
         submitButton.addEventListener('click', e => {
             e.preventDefault();
 
@@ -58,22 +51,23 @@ var KTUsersAddUser = function () {
 
                         // Disable button to avoid multiple click 
                         submitButton.disabled = true;
-                        var altturId = form.querySelector('[name="altTur"]').value
-                        console.log("Value: " + altturId);
+                        var resimElement = document.querySelector(".image-input-wrapper");
+                        const resimArray = resimElement.style.backgroundImage;
+                        const myArray = resimArray.split(",");
+                        var resim64 = myArray[1].substring(0, myArray[1].length - 2);
 
                         // Simulate form submission. For more info check the plugin's official documentation: https://sweetalert2.github.io/
                         setTimeout(function () {
                             // Remove loading indication
                             submitButton.removeAttribute('data-kt-indicator');
-
+                            
                             // Enable button
                             submitButton.disabled = false;
-
                             $.ajax({
-                                url: "/Hayvan/hayvanEkleJson/",
+                                url: "/UstKategori/kategoriEkle/",
                                 type: "POST",
                                 data: {
-                                    "rfid": form.querySelector('[name="user_name"]').value, "hayvanAdi": form.querySelector('[name="user_email"]').value, "cinsiyet": form.querySelector('input[name="user_role"]:checked').value, "altTurId": altturId
+                                    "resim": resim64, "kategoriAdi": form.querySelector('[name="kategoriName"]').value, "ustKategoriId": form.querySelector('[name="ustKategoriId"]').value
                                 },
                                 success: function (returnData) {
 
@@ -109,7 +103,7 @@ var KTUsersAddUser = function () {
                                         window.setTimeout(function () {
 
                                             // Move to a new location or you can do something else
-                                            window.location.href = "../../Hayvan/HayvanListesi";
+                                            window.location.href = "../../UstKategori/UstKategoriListesi";
 
                                         }, 1500);
                                     }
@@ -129,17 +123,17 @@ var KTUsersAddUser = function () {
                                 }
                             });
 
-                            
+
 
                             //form.submit(); // Submit form
                         }, 2000);
-                    } 
+                    }
                 });
             }
         });
 
         // Cancel button handler
-        const cancelButton = element.querySelector('[data-kt-users-modal-action="cancel"]');
+        const cancelButton = element.querySelector('[data-kt-users-modal-action-kat="cancel"]');
         cancelButton.addEventListener('click', e => {
             e.preventDefault();
 
@@ -149,7 +143,7 @@ var KTUsersAddUser = function () {
                 showCancelButton: true,
                 buttonsStyling: false,
                 confirmButtonText: "Evet!",
-                cancelButtonText: "Hay�r, geri don!",
+                cancelButtonText: "Hayır, geri don!",
                 customClass: {
                     confirmButton: "btn btn-primary",
                     cancelButton: "btn btn-active-light"
@@ -173,7 +167,7 @@ var KTUsersAddUser = function () {
         });
 
         // Close button handler
-        const closeButton = element.querySelector('[data-kt-users-modal-action="close"]');
+        const closeButton = element.querySelector('[data-kt-users-modal-action-kat="close"]');
         closeButton.addEventListener('click', e => {
             e.preventDefault();
 

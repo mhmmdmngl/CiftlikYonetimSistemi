@@ -12,9 +12,13 @@ namespace CYS.Repos
 			{
 				var list = connection.Query<Hayvan>(sorgu, param).ToList();
 				UserCTX uctx = new UserCTX();
+				KategoriCTX kctx = new KategoriCTX();
+				HayvanKriterUnsurCTX hkuCTX = new HayvanKriterUnsurCTX();
 				foreach (var item in list)
 				{
 					item.user = uctx.userTek("select * from user where id = @id", new { id = item.userId });
+					item.kategori = kctx.KategoriTek("select * from kategori where id = @id", new {id = item.kategoriId});
+					item.ozellikler = hkuCTX.HayvanKriterUnsurList("select * from hayvanKriterUnsur where hayvanId = @hayvanId", new { hayvanId = item.id });
 				}
 				return list;
 			}
@@ -26,8 +30,17 @@ namespace CYS.Repos
 			{
 				var item = connection.Query<Hayvan>(sorgu, param).FirstOrDefault();
 				UserCTX uctx = new UserCTX();
-				if(item != null)
-					item.user = uctx.userTek("select * from user where id = @id", new { id = item.userId });
+				HayvanKriterUnsurCTX hkuCTX = new HayvanKriterUnsurCTX();
+
+				KategoriCTX kctx = new KategoriCTX();
+
+                if (item != null)
+				{
+                    item.user = uctx.userTek("select * from user where id = @id", new { id = item.userId });
+                    item.kategori = kctx.KategoriTek("select * from kategori where id = @id", new { id = item.kategoriId });
+					item.ozellikler = hkuCTX.HayvanKriterUnsurList("select * from hayvanKriterUnsur where hayvanId = @hayvanId", new { hayvanId = item.id });
+
+				}
 				return item;
 			}
 		}
@@ -36,7 +49,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into hayvan (rfidKodu,kupeIsmi,cinsiyet,agirlik, userId) values (@rfidKodu,@kupeIsmi,@cinsiyet,@agirlik, @userId)", hayvan);
+				var item = connection.Execute("insert into hayvan (rfidKodu,kupeIsmi,cinsiyet,agirlik, userId, kategoriId) values (@rfidKodu,@kupeIsmi,@cinsiyet,@agirlik, @userId, @kategoriId)", hayvan);
 				return item;
 			}
 		}
@@ -45,7 +58,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update hayvan set rfidKodu = rfidKodu,kupeIsmi = @kupeIsmi,cinsiyet = @cinsiyet,agirlik = @agirlik, userId= @userId, aktif = @aktif where id = @id", hayvan);
+				var item = connection.Execute("update hayvan set rfidKodu = rfidKodu,kupeIsmi = @kupeIsmi,cinsiyet = @cinsiyet,agirlik = @agirlik, userId= @userId, kategoriId = @kategoriId, aktif = @aktif where id = @id", hayvan);
 				return item;
 			}
 		}

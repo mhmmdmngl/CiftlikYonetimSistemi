@@ -70,7 +70,7 @@ var KTSigninGeneral = function () {
                             },
                             success: function (returnData) {
 
-                                if (returnData["status"] != "error") {
+                                if (returnData["status"] == "error") {
                                     Swal.fire({
                                         text: returnData["message"],
                                         icon: "error",
@@ -86,7 +86,7 @@ var KTSigninGeneral = function () {
                                 else {
                                     // Show message popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
                                     Swal.fire({
-                                        text: "Başarı ile Giriş Yaptınız",
+                                        text: returnData["message"],
                                         icon: "success",
                                         buttonsStyling: false,
                                         confirmButtonText: "Yönlen",
@@ -98,7 +98,11 @@ var KTSigninGeneral = function () {
                                             form.querySelector('[name="email"]').value = "";
                                             form.querySelector('[name="password"]').value = "";
                                             //form.submit(); // submit form
+                                            window.location.href = '/';
+
                                         }
+                                        window.location.href = '/';
+
                                     });
                                 }
                             }

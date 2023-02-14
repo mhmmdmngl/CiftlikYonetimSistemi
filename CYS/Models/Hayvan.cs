@@ -11,7 +11,9 @@
 		public string agirlik { get; set; }
 		public int aktif { get; set; }
 		public DateTime tarih { get; set; }
+        public int kategoriId { get; set; }
+		public Kategori kategori { set; get; }
+		public List<HayvanKriterUnsur> ozellikler { get; set; }
 
-
-	}
+    }
 }
