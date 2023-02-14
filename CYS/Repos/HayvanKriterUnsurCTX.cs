@@ -44,7 +44,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into HayvanKriterUnsur (hayvanId, kriterUnsurId) values (@hayvanId, @kriterUnsurId)", kriter);
+				var item = connection.Execute("insert into hayvanKriterUnsur (hayvanId, kriterUnsurId) values (@hayvanId, @kriterUnsurId)", kriter);
 				return item;
 			}
 		}
