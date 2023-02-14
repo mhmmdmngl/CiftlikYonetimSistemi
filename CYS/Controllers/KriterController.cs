@@ -29,7 +29,7 @@ namespace CYS.Controllers
 		public IActionResult kriterUnsurEkle(int kriterId)
 		{
 			KriterUnsurCTX kuctx = new KriterUnsurCTX();
-			var kriterUnsurList = kuctx.kriterUnsurList("select * from kriterUnsur where kriterId = @kriterId", new { kriterId = kriterId });
+			var kriterUnsurList = kuctx.kriterUnsurList("select * from KriterUnsur where kriterId = @kriterId", new { kriterId = kriterId });
 			ViewBag.kriterId = kriterId;
 			return View(kriterUnsurList);
 		}
