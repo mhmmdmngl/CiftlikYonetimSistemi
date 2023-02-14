@@ -14,7 +14,7 @@ namespace CYS.Controllers
 		public IActionResult ustKategoriListesi()
 		{
 			ustKategoriCTX ukctx = new ustKategoriCTX();
-			var liste = ukctx.ustKategoriList("select * from ustKategori", null);
+			var liste = ukctx.ustKategoriList("select * from cys.ustKategori", null);
 			return View(liste);
 		}
 

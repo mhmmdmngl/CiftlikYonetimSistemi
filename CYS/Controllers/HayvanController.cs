@@ -218,7 +218,7 @@ namespace CYS.Controllers
             List<hayvanTuru> ustKategoriList = new List<hayvanTuru>();
 			List<SelectListItem> itList = new List<SelectListItem>();
             ustKategoriCTX hctx = new ustKategoriCTX();
-            var list = hctx.ustKategoriList("select * from ustKategori where isActive = 1", null);
+            var list = hctx.ustKategoriList("select * from cys.ustKategori where isActive = 1", null);
             foreach (var item in list)
 			{
 				SelectListItem it = new SelectListItem() { Value = item.id.ToString(), Text = item.name };
@@ -251,7 +251,7 @@ namespace CYS.Controllers
             List<hayvanTuru> ustKategoriList = new List<hayvanTuru>();
 			// Add parts to the list.
 			ustKategoriCTX hctx = new ustKategoriCTX();
-			var list = hctx.ustKategoriList("select * from ustKategori where isActive = 1",null);
+			var list = hctx.ustKategoriList("select * from cys.ustKategori where isActive = 1",null);
 			foreach(var item in list)
 			{
                 ustKategoriList.Add(new hayvanTuru() { Id = item.id, Text = item.name });

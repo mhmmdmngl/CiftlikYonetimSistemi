@@ -13,7 +13,7 @@ namespace CYS.Repos
                 var list = connection.Query<Kategori>(sorgu, param).ToList();
                 ustKategoriCTX uctx = new ustKategoriCTX();
                 foreach(var item in list)
-                    item.ustkategori = uctx.ustKategoriTek("select * from ustKategori where id = @id", new { id = item.ustKategoriId });
+                    item.ustkategori = uctx.ustKategoriTek("select * from cys.ustKategori where id = @id", new { id = item.ustKategoriId });
 
                 return list;
             }
@@ -26,7 +26,7 @@ namespace CYS.Repos
                 var item = connection.Query<Kategori>(sorgu, param).FirstOrDefault();
                 ustKategoriCTX uctx = new ustKategoriCTX();
                 if(item != null)
-                    item.ustkategori = uctx.ustKategoriTek("select * from ustKategori where id = @id", new { id = item.ustKategoriId });
+                    item.ustkategori = uctx.ustKategoriTek("select * from cys.ustKategori where id = @id", new { id = item.ustKategoriId });
 
                 return item;
             }
