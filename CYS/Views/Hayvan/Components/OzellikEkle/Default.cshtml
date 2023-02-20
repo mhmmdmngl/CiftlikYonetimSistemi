@@ -53,6 +53,27 @@
 
 
 						</div>
+						<div class="fv-row mb-7">
+							<label class="required fs-6 fw-bold mb-2">Mevcut Özellikler</label>
+							<!--end::Label-->
+							<!--begin::Input-->
+							<table id="kt_datatable_zero_configuration" class="table table-row-bordered gy-5" >
+								<thead>
+									<tr class="fw-semibold fs-6 text-muted">
+										<th>Neye Göre</th>
+										<th>Kriter</th>
+										<th>Sil</th>
+									</tr>
+								</thead>
+								<tbody id="tbId">
+
+									
+
+								</tbody>
+								
+							</table>
+
+						</div>
 
 					</div>
 					<!--end::Scroll-->
@@ -69,6 +90,9 @@
 					</div>
 					<!--end::Actions-->
 				</form>
+				<div id="tblOzellik">
+
+				</div>
 				<!--end::Form-->
 			</div>
 			<!--end::Modal body-->
@@ -109,6 +133,106 @@
 		for (i = L; i >= 0; i--) {
 			selectElement.remove(i);
 		}
+	}
+
+	function hayvankriterunsur() {
+		var e = document.getElementById("idHayvan");
+		ozellikDoldur(e.value);
+		}
+
+		function ozellikDoldur(id)
+		{
+		var tbl = document.getElementById("tbId");
+		$("#tbId tr").remove();
+
+		//tbl = document.getElementById('kt_datatable_zero_configuration');
+		$.ajax({
+			url: "/Hayvan/hayvaninOzellikleriJson",
+			dataType: "json",
+			type: "POST",
+			data: {
+				"hayvanId": id
+			},
+			success: function (returnData) {
+				var gelen = JSON.parse(returnData);
+
+				for (let i = 0; i < gelen.length; i++) {
+					const tr = tbl.insertRow();
+
+					const td = tr.insertCell();
+					td.appendChild(document.createTextNode(gelen[i].kriterunsur.kriter.kriterAdi));
+
+					const td1 = tr.insertCell();
+					td1.appendChild(document.createTextNode(gelen[i].kriterunsur.unsurAdi));
+
+					const td2 = tr.insertCell();
+					td2.appendChild(buttonOlustur(gelen[i].id));
+
+				}
+
+			}
+		});
+		}
+
+		function buttonOlustur(id)
+		{
+		var a = document.createElement('a');
+		a.classList.add("btn");
+		a.classList.add("btn-light-danger");
+		a.classList.add("font-weight-bold");
+		a.classList.add("mr-2");
+
+		var linkText = document.createTextNode("Sil");
+		a.appendChild(linkText);
+		a.href = 'javascript:ozellikSil('+id+');';
+		return a;
+		}
+
+		function ozellikSil(id)
+		{
+		$.ajax({
+			url: "/Hayvan/HayvanOzellikSilJson",
+			dataType: "json",
+			type: "POST",
+			data: {
+				"id": id
+			},
+			success: function (returnData) {
+				if (returnData["status"] == "Error") {
+					// Show error popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+					Swal.fire({
+						text: returnData["message"],
+						icon: "error",
+						buttonsStyling: false,
+						confirmButtonText: "Tekrar Eklemeyi dene!",
+						customClass: {
+							confirmButton: "btn btn-primary"
+
+						}
+					});
+
+				} else {
+					ozellikDoldur(id);
+
+					Swal.fire({
+						text: returnData["message"],
+						icon: "success",
+						buttonsStyling: false,
+						customClass: {
+							confirmButton: "btn btn-primary"
+
+						}
+					});
+					window.setTimeout(function () {
+
+						// Move to a new location or you can do something else
+						window.location.href = "../../Hayvan/HayvanListesi";
+
+					}, 1000);
+				}
+
+			}
+		});
 	}
 </script>
 

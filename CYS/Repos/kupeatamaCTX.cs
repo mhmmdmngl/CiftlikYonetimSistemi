@@ -38,7 +38,7 @@ namespace CYS.Repos
 			hayvan.tarih = DateTime.Now;
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into kupeatama ( userId, kupeRfid, tarih) values (@userId, @kupeRfid, @tarih)", hayvan);
+				var item = connection.Execute("insert into kupeatama ( userId, kupeRfid, tarih, requestId) values (@userId, @kupeRfid, @tarih, @requestId)", hayvan);
 				return item;
 			}
 		}
@@ -47,7 +47,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update kupeatama set userId = @userId,kupeRfid=@kupeRfid, aktif = @aktif where id = @id", hayvan);
+				var item = connection.Execute("update kupeatama set userId = @userId,kupeRfid=@kupeRfid, aktif = @aktif, requestId = @requestId where id = @id", hayvan);
 				return item;
 			}
 		}

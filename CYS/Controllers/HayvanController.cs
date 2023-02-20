@@ -3,6 +3,8 @@ using CYS.Repos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using RestSharp;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace CYS.Controllers
@@ -281,9 +283,34 @@ namespace CYS.Controllers
 			return Json(eleman);
 		}
 
+		public JsonResult hayvaninOzellikleri(int hayvanId)
+		{
+			KriterUnsurCTX hctx = new KriterUnsurCTX();
+			var ozellikList = hctx.kriterUnsurList("select * from hayvanKriterUnsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = Convert.ToString(hayvanId) });
+			var eleman = System.Text.Json.JsonSerializer.Serialize(ozellikList);
+			return Json(eleman);
+		}
+
 		public JsonResult HayvanOzellikEkleJson( int kriterId, int unsurId, int hayvanId)
 		{
 			HayvanKriterUnsurCTX hayvanKriterUnsurCTX = new HayvanKriterUnsurCTX();
+			KriterUnsurCTX kctx = new KriterUnsurCTX();
+
+			var varmi = kctx.kriterUnsurTek("SELECT kriterUnsur.* FROM kriter, kriterunsur, hayvankriterunsur, hayvan where hayvankriterunsur.kriterUnsurId = kriterUnsur.id and kriterunsur.kriterId = kriter.id and kriter.id = @kriterId and hayvanKriterUnsur.isActive = 1 and hayvan.id = @hayvanId and hayvan.id = hayvankriterunsur.hayvanId", new { hayvanId = hayvanId, kriterId = kriterId });
+			if(varmi != null)
+			{
+				var mevcut = hayvanKriterUnsurCTX.HayvanKriterUnsurTek("select * from hayvanKriterUnsur where kriterUnsurId = @kriterUnsurId and hayvanId = @hayvanId and isActive = 1", new { hayvanId = hayvanId, kriterUnsurId = varmi.id });
+				if(mevcut != null)
+				{
+					mevcut.kriterUnsurId = unsurId;
+					hayvanKriterUnsurCTX.HayvanKriterUnsurGuncelle(mevcut);
+					return Json(new { status = "Success", message = "Özellik Güncellendi..." });
+
+				}
+				return Json(new { status = "Error", message = "Bir Hata Oluştu..." });
+
+			}
+
 			HayvanKriterUnsur hayvanKriterUnsur = new HayvanKriterUnsur()
 			{
 				kriterUnsurId = unsurId,
@@ -292,6 +319,122 @@ namespace CYS.Controllers
 			hayvanKriterUnsurCTX.HayvanKriterUnsurEkle(hayvanKriterUnsur);
 			return Json(new { status = "Success", message = "Özellik Eklendi..." });
 
+		}
+
+		public JsonResult HayvanOzellikSilJson(int id)
+		{
+			HayvanKriterUnsurCTX hayvanKriterUnsurCTX = new HayvanKriterUnsurCTX();
+			var varmi = hayvanKriterUnsurCTX.HayvanKriterUnsurTek("select * from hayvanKriterUnsur where id = @id and isActive = 1", new { id = id});
+			if (varmi != null)
+			{
+				varmi.isActive = 0;
+				hayvanKriterUnsurCTX.HayvanKriterUnsurGuncelle(varmi);
+				return Json(new { status = "Success", message = "Özellik Silindi..." });
+
+
+			}
+			return Json(new { status = "Error", message = "Özellik bulunamadı" });
+
+
+		}
+
+		public JsonResult rfidIstekJson(string requestId)
+		{
+			var user = HttpContext.Session.GetString("user");
+			var profile = HttpContext.Session.GetString("profile");
+			if (user != null && profile != null)
+			{
+				var userObj = JsonConvert.DeserializeObject<User>(user);
+				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+				kupeatamaCTX hctx = new kupeatamaCTX();
+				KupeAtama kupe = new KupeAtama()
+				{
+					requestId = requestId,
+					userId = userObj.id,
+					kupeRfid = ""
+				};
+				hctx.kupeAtamaEkle(kupe);
+
+				var eklenenId = hctx.kupeAtamaTek("select * from kupeAtama where requestId = @requestId", new { requestId = requestId });
+
+				var client = new RestClient(profileObj.cihazLink + "RFIDApi");
+				client.Timeout = -1;
+				var request = new RestRequest(Method.GET);
+				IRestResponse response = client.Execute(request);
+				var cevap = response.Content;
+				//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+
+				var mevcutKupe = hctx.kupeAtamaTek("select * from kupeAtama where requestId = @requestId", new { requestId = requestId });
+				mevcutKupe.kupeRfid = cevap;
+
+				hctx.kupeAtamaGuncelle(mevcutKupe);
+				return Json("");
+			}
+			return Json("");
+
+
+		}
+
+
+		public JsonResult agirlikIstekJson(string requestId)
+		{
+			var user = HttpContext.Session.GetString("user");
+			var profile = HttpContext.Session.GetString("profile");
+			if (user != null && profile != null)
+			{
+				var userObj = JsonConvert.DeserializeObject<User>(user);
+				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+				AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
+				AgirlikOlcum agirlik = new AgirlikOlcum()
+				{
+					requestId = requestId,
+					userId = userObj.id,
+					agirlikOlcumu = ""
+				};
+				hctx.agirlikOlcumEkle(agirlik);
+
+				var eklenenId = hctx.agirlikOlcumTek("select * from agirlikOlcum where requestId = @requestId", new { requestId = requestId });
+
+				var client = new RestClient(profileObj.cihazLink+"AgirlikApi");
+				client.Timeout = -1;
+				var request = new RestRequest(Method.GET);
+				IRestResponse response = client.Execute(request);
+				var cevap = response.Content;
+				//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+
+				eklenenId.agirlikOlcumu = cevap;
+
+				hctx.agirlikOlcumGuncelle(eklenenId);
+				return Json("");
+			}
+			return Json("");
+
+			
+		}
+
+		public JsonResult hayvaninOzellikleriJson(int hayvanId)
+		{
+			HayvanKriterUnsurCTX hkctx = new HayvanKriterUnsurCTX();
+			var list = hkctx.HayvanKriterUnsurList("select * from hayvankriterunsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = hayvanId });
+			var jsonObject = JsonConvert.SerializeObject(list);
+			return Json(jsonObject);
+
+		}
+
+		public JsonResult son5Hayvan()
+		{
+			HayvanCTX hctx = new HayvanCTX();
+			var son5 = hctx.hayvanList("select * from Hayvan where aktif = 1 order by id desc limit 5", null);
+			var jsonObject = JsonConvert.SerializeObject(son5);
+			return Json(jsonObject);
+		}
+
+		public JsonResult tumHayvanlar(string q)
+		{
+			HayvanCTX hctx = new HayvanCTX();
+			var hepsi = hctx.hayvanList("select * from Hayvan where aktif = 1 order by id desc", null);
+			var jsonObject = JsonConvert.SerializeObject(hepsi);
+			return Json(jsonObject);
 		}
 
 	}

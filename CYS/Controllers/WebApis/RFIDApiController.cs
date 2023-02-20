@@ -11,20 +11,19 @@ namespace CYS.Controllers.WebApis
     public class RFIDApiController : ControllerBase
     {
         // GET: api/<RFIDApiController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        //[HttpGet]
+        //public IEnumerable<string> Get()
+        //{
+        //    return new string[] { "value1", "value2" };
+        //}
 
-        // GET api/<RFIDApiController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+		// GET api/<RFIDApiController>/5
+		[HttpGet]
+		public IEnumerable<string> Get()
         {
-            return "value";
-        }
+            return new string[] { "fefefeefefebbaaaccc", "value2" };
+		}
 
-        // POST api/<RFIDApiController>
         [HttpPost]
         public void Post(string rfid)
         {
@@ -38,8 +37,9 @@ namespace CYS.Controllers.WebApis
             kupeatama.kupeAtamaEkle(kam);
         }
 
-        // PUT api/<RFIDApiController>/5
-        [HttpPut("{id}")]
+
+		// PUT api/<RFIDApiController>/5
+		[HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }

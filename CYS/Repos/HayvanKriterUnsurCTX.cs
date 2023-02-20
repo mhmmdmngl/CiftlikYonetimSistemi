@@ -48,5 +48,14 @@ namespace CYS.Repos
 				return item;
 			}
 		}
+
+		public int HayvanKriterUnsurGuncelle(HayvanKriterUnsur hayvan)
+		{
+			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
+			{
+				var item = connection.Execute("update HayvanKriterUnsur set hayvanId = @hayvanId, kriterUnsurId = @kriterUnsurId, isActive = @isActive where id = @id", hayvan);
+				return item;
+			}
+		}
 	}
 }

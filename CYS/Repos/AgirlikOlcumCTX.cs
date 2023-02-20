@@ -36,16 +36,16 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into agirlikolcum (userId,agirlikOlcumu) values (@userId,@agirlikOlcumu)", hayvan);
+				var item = connection.Execute("insert into agirlikolcum (userId,agirlikOlcumu, requestId) values (@userId,@agirlikOlcumu, @requestId)", hayvan);
 				return item;
 			}
 		}
 
-		public int agirlikOlcumGuncelle(Hayvan hayvan)
+		public int agirlikOlcumGuncelle(AgirlikOlcum hayvan)
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update agirlikolcum set userId = @userId,agirlikOlcumu=@agirlikOlcumu, aktif = @aktif where id = @id", hayvan);
+				var item = connection.Execute("update agirlikolcum set userId = @userId,agirlikOlcumu=@agirlikOlcumu, aktif = @aktif, requestId = @requestId where id = @id", hayvan);
 				return item;
 			}
 		}

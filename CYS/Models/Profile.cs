@@ -12,6 +12,8 @@
 		public string phoneNumber { get; set; }
 		public string cellPhoneNumber { get; set; }
 		public byte[] logo { get; set; }
+		public string cihazLink { get; set; }
+
 
 
 	}

@@ -32,7 +32,7 @@
 									</svg>
 								</span>
 								<!--end::Svg Icon-->
-								<input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Hayvan Ara" />
+								<input id="txtArax" type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14"  placeholder="Hayvan Ara" />
 							</div>
 							<!--end::Search-->
 						</div>
@@ -340,7 +340,7 @@
 													{
 														foreach(var it in item.ozellikler)
 														{
-															<span class='@it.kriterunsur.kriter.badge'>@it.kriterunsur.unsurAdi</span>
+															<a href="javascript:Ara('@it.kriterunsur.unsurAdi')"><span class='@it.kriterunsur.kriter.badge'>@it.kriterunsur.unsurAdi</span></a>
 															<span>,</span>
 														}
 
@@ -365,6 +365,9 @@
 												<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
 													<div class="menu-item px-3">
 														<a href="javascript:modalAc(@item.id)"  class="menu-link px-3">Özellik Ekle</a>
+													</div>
+													<div class="menu-item px-3">
+														<a href="javascript:ustSoyModalAc(@item.id)" class="menu-link px-3">Üst Soy</a>
 													</div>
 													<!--begin::Menu item-->
 													<div class="menu-item px-3">
@@ -434,26 +437,28 @@
 </div>
 <!--begin::Page Custom Javascript(used by this page)-->
 @await Component.InvokeAsync("OzellikEkle")
+@await Component.InvokeAsync("UstSoy")
 
 
 
 
 <script>
 	var olcum = 0;
-
+	let guid = "";
+	let agirlik = "";
 
 	setInterval(function () {
 		rfidGetir();
-		if(olcum == 1)
-		{
-			agirlikGetir();
-		}
+		agirlikGetir();
+
 	}, 1000);
 
 	function rfidGetir()
 	{
-		var item = document.getElementById("agirlikTxt");
+		var item = document.getElementById("rfidTxt");
 		var tarih = document.getElementById("tarihlbl");
+		if(guid == "")
+			return;
 		$.ajax({
 			url: "/Hayvan/rfidDondur",
 			type: "POST",
@@ -472,21 +477,42 @@
 		});
 	}
 
+	function Ara(aranan)
+	{
+		var eleman = document.getElementById("txtArax");
+		eleman.value = "";
+
+		eleman.value = aranan;
+		eleman.focus();
+		var e = jQuery.Event("dsfdfdf");
+		e.keyCode = 13;
+		$("#txtArax").trigger(e);
+
+		const ke = new KeyboardEvent('keyup', {
+    bubbles: true, cancelable: true, keyCode: 13
+});
+		eleman.dispatchEvent(ke)
+		
+
+
+	}
+
 	function agirlikGetir() {
 
-		var item = document.getElementById("agirlik-name");
-
+		var item = document.getElementById("agirlikTxt");
+		if (guid == "")
+			return;
 		$.ajax({
 			url: "/Hayvan/agirlikDondur",
 			type: "POST",
 			async: true,
 			success: function (returnData) {
-
 				if (returnData["status"] == "0" || returnData["status"] == "-1") {
 
 
 				}
 				else {
+
 					item.value = returnData["status"];
 				}
 			}
@@ -510,14 +536,25 @@
 	{
 		document.getElementById("idHayvan").value = id;
 		$("#kt_modal_add_user_ozellik").modal('show');
+		hayvankriterunsur();
 
 	}
 
+	function ustSoyModalAc(id) {
+		document.getElementById("idHayvanSoy").value = id;
+		$("#kt_modal_users_search").modal('show');
+		sonhayvanlar();
+
+
+	}
+
+
+
 	function agirlikEkle(){
+
 		olcum = 0;
 		var hayvanid = document.getElementById("recipient-id");
 		var agirlik = document.getElementById("agirlik-name");
-
 		$.ajax({
 			url: "/Hayvan/HayvanAgirlikGuncelleJson",
 			dataType: "json",
@@ -560,6 +597,79 @@
 		});
 	}
 
+	function turSecim() {
+		var e = document.getElementById("lblTur");
+		var item = document.getElementById("lblaltTur");
+		removeOptions(item);
+		$.ajax({
+			url: "/Hayvan/hayvanAltTurJson",
+			dataType: "json",
+			type: "POST",
+			data: {
+				"value": e.value
+			},
+			success: function (returnData) {
+				var gelen = JSON.parse(returnData);
+				for (let i = 0; i < gelen.length; i++) {
+					var opt = document.createElement("option");
+					opt.value = gelen[i].id;
+					opt.text = gelen[i].kategoriAdi; // whatever property it has
+					item.appendChild(opt);
+				}
+			}
+		});
 
+
+	}
+
+	function removeOptions(selectElement) {
+		var i, L = selectElement.options.length - 1;
+		for (i = L; i >= 0; i--) {
+			selectElement.remove(i);
+		}
+	}
+
+	function agirlikIstek() {
+		if (guid == "")
+			guid = uuidv4();
+		$.ajax({
+			url: "/Hayvan/agirlikIstekJson",
+			dataType: "json",
+			type: "POST",
+			data: {
+				"requestId": guid
+			},
+			success: function (returnData) {
+
+			}
+		});
+	}
+
+	function rfIdIstek() {
+		if (guid == "")
+			guid = uuidv4();
+		$.ajax({
+			url: "/Hayvan/rfidIstekJson",
+			dataType: "json",
+			type: "POST",
+			data: {
+				"requestId": guid
+			},
+			success: function (returnData) {
+
+			}
+		});
+		
+	}
+
+	function uuidv4() {
+		var guuu = document.getElementById("guidId");
+		var gui = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+		);
+		guuu.value = gui;
+		return gui;
+	}
 </script>
+
 

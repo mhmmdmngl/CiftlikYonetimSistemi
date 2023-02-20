@@ -68,7 +68,6 @@ var KTUsersAddUser = function () {
 
                             // Enable button
                             submitButton.disabled = false;
-
                             $.ajax({
                                 url: "/Hayvan/hayvanEkleJson/",
                                 type: "POST",

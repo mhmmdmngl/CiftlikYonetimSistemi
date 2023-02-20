@@ -1,4 +1,6 @@
-﻿namespace CYS.Models
+﻿using System.Security.Policy;
+
+namespace CYS.Models
 {
 	public class KupeAtama
 	{
@@ -7,6 +9,7 @@
 		public User user { get; set; }
 		public string kupeRfid { get; set; }
 		public int aktif { get; set; }
+		public string requestId { set; get; }
 		public DateTime tarih { get; set; }
 
 	}

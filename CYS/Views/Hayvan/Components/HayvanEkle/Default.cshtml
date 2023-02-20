@@ -31,23 +31,50 @@
 					<div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
 						<!--begin::Input group-->
 						<!--end::Input group-->
+						<div class="fv-row mb-4 row">
+							<label class="required fw-bold fs-6 mb-2">İstek Id</label>
+
+							<input class="form-control form-control-solid mb-3 mb-lg-0" type="text" name="guidName" id="guidId" value="" />
+							<!--end::Input-->
+						</div>
 						<!--begin::Input group-->
-						<div class="fv-row mb-4">
-							<!--begin::Label-->
-							<label class="required fw-bold fs-6 mb-2">Eid</label>
-							<!--end::Label-->
-							<!--begin::Input-->
-							<input type="text" name="user_name" id="agirlikTxt" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="RFID Okutun" />
-							<label class="fw-bold fs-6 mb-2" id="tarihlbl"></label>
+						<div class="fv-row mb-4 row">
+							<div class="col-8">
+								<!--begin::Label-->
+								<label class="required fw-bold fs-6 mb-2">Eid</label>
+								<!--end::Label-->
+								<!--begin::Input-->
+								<input type="text" name="user_name" id="rfidTxt" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="RFID Okutun" />
+								<label class="fw-bold fs-6 mb-2" id="tarihlbl"></label>
+							</div>
+							<div class="col-4">
+								<label class="required fw-bold fs-6 mb-2">Küpe Oku</label>
+
+								<input type="button" onclick="rfIdIstek()" class="form-control  mb-3  btn btn-primary" value="Küpe Oku" />
+
+							</div>
+							
 							<!--end::Input-->
 						</div>
-						<div class="fv-row mb-3">
-							<!--begin::Label-->
-							<!--end::Label-->
-							<!--begin::Input-->
-							<input type="button" name="user_name"  class="form-control  mb-3 mb-lg-0 btn btn-primary" value="Küpe Oku" />
+
+						<div class="fv-row mb-4 row">
+							<div class="col-8">
+								<!--begin::Label-->
+								<label class="required fw-bold fs-6 mb-2">Ağırlık</label>
+								<!--end::Label-->
+								<!--begin::Input-->
+								<input type="text" name="agirlik-name" id="agirlikTxt" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Ağırlık Girin" />
+								<label class="fw-bold fs-6 mb-2" id="tarihlbl"></label>
+							</div>
+							<div class="col-4">
+								<label class="required fw-bold fs-6 mb-2">Ağırlık Ölç</label>
+
+								<input type="button" onclick="agirlikIstek()" class="form-control  mb-3  btn btn-success" value="Ağırlık Ölç" />
+
+							</div>
 							<!--end::Input-->
 						</div>
+	
 						<div class="fv-row mb-7">
 							<label class="required fs-6 fw-bold mb-2">Tür Seçin</label>
 							<!--end::Label-->
@@ -164,37 +191,4 @@
 	<!--end::Modal dialog-->
 </div>
 
-<script>
-	function turSecim() {
-		var e = document.getElementById("lblTur");
-		var item = document.getElementById("lblaltTur");
-		removeOptions(item);
-	$.ajax({
-		url: "/Hayvan/hayvanAltTurJson",
-		dataType: "json",
-		type: "POST",
-		data: {
-			"value": e.value
-		},
-		success: function (returnData) {
-			var gelen =	JSON.parse(returnData);
-			for(let i = 0; i < gelen.length; i++)
-			{
-				var opt = document.createElement("option");
-				opt.value = gelen[i].id;
-				opt.text = gelen[i].kategoriAdi; // whatever property it has
-				item.appendChild(opt);
-			}
-		}
-	});
 
-
-	}
-
-	function removeOptions(selectElement) {
-		var i, L = selectElement.options.length - 1;
-		for (i = L; i >= 0; i--) {
-			selectElement.remove(i);
-		}
-	}
-</script>
