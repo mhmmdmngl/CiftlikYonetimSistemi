@@ -82,7 +82,7 @@ namespace CYS.Controllers
 			{
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				AgirlikOlcumCTX actx = new AgirlikOlcumCTX();
-				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikOlcum where userId = @userId order by id desc limit 1", new { userId = userObj.id });
+				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikolcum where userId = @userId order by id desc limit 1", new { userId = userObj.id });
 				if(sonAgirlik != null)
 				{
 					return Json(new { status = sonAgirlik.agirlikOlcumu, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
@@ -237,7 +237,7 @@ namespace CYS.Controllers
 			List<Kriter> ustKategoriList = new List<Kriter>();
 			List<SelectListItem> itList = new List<SelectListItem>();
 			ustKategoriCTX hctx = new ustKategoriCTX();
-			var kriterListesi = kritCTX.kriterList("select * from Kriter", null);
+			var kriterListesi = kritCTX.kriterList("select * from kriter", null);
 			foreach (var item in kriterListesi)
 			{
 				SelectListItem it = new SelectListItem() { Value = item.id.ToString(), Text = item.kriterAdi };
@@ -278,7 +278,7 @@ namespace CYS.Controllers
 		public JsonResult hayvanOzellikGetirJson(string value)
 		{
 			KriterUnsurCTX hctx = new KriterUnsurCTX();
-			var ozellikList = hctx.kriterUnsurList("select * from KriterUnsur where kriterId = @kriterId and isActive = 1", new { kriterId = Convert.ToString(value) });
+			var ozellikList = hctx.kriterUnsurList("select * from kriterunsur where kriterId = @kriterId and isActive = 1", new { kriterId = Convert.ToString(value) });
 			var eleman = System.Text.Json.JsonSerializer.Serialize(ozellikList);
 			return Json(eleman);
 		}
@@ -286,7 +286,7 @@ namespace CYS.Controllers
 		public JsonResult hayvaninOzellikleri(int hayvanId)
 		{
 			KriterUnsurCTX hctx = new KriterUnsurCTX();
-			var ozellikList = hctx.kriterUnsurList("select * from hayvanKriterUnsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = Convert.ToString(hayvanId) });
+			var ozellikList = hctx.kriterUnsurList("select * from hayvankriterunsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = Convert.ToString(hayvanId) });
 			var eleman = System.Text.Json.JsonSerializer.Serialize(ozellikList);
 			return Json(eleman);
 		}
@@ -299,7 +299,7 @@ namespace CYS.Controllers
 			var varmi = kctx.kriterUnsurTek("SELECT kriterUnsur.* FROM kriter, kriterunsur, hayvankriterunsur, hayvan where hayvankriterunsur.kriterUnsurId = kriterUnsur.id and kriterunsur.kriterId = kriter.id and kriter.id = @kriterId and hayvanKriterUnsur.isActive = 1 and hayvan.id = @hayvanId and hayvan.id = hayvankriterunsur.hayvanId", new { hayvanId = hayvanId, kriterId = kriterId });
 			if(varmi != null)
 			{
-				var mevcut = hayvanKriterUnsurCTX.HayvanKriterUnsurTek("select * from hayvanKriterUnsur where kriterUnsurId = @kriterUnsurId and hayvanId = @hayvanId and isActive = 1", new { hayvanId = hayvanId, kriterUnsurId = varmi.id });
+				var mevcut = hayvanKriterUnsurCTX.HayvanKriterUnsurTek("select * from hayvankriterunsur where kriterUnsurId = @kriterUnsurId and hayvanId = @hayvanId and isActive = 1", new { hayvanId = hayvanId, kriterUnsurId = varmi.id });
 				if(mevcut != null)
 				{
 					mevcut.kriterUnsurId = unsurId;
@@ -324,7 +324,7 @@ namespace CYS.Controllers
 		public JsonResult HayvanOzellikSilJson(int id)
 		{
 			HayvanKriterUnsurCTX hayvanKriterUnsurCTX = new HayvanKriterUnsurCTX();
-			var varmi = hayvanKriterUnsurCTX.HayvanKriterUnsurTek("select * from hayvanKriterUnsur where id = @id and isActive = 1", new { id = id});
+			var varmi = hayvanKriterUnsurCTX.HayvanKriterUnsurTek("select * from hayvankriterunsur where id = @id and isActive = 1", new { id = id});
 			if (varmi != null)
 			{
 				varmi.isActive = 0;
@@ -355,7 +355,7 @@ namespace CYS.Controllers
 				};
 				hctx.kupeAtamaEkle(kupe);
 
-				var eklenenId = hctx.kupeAtamaTek("select * from kupeAtama where requestId = @requestId", new { requestId = requestId });
+				var eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
 
 				var client = new RestClient(profileObj.cihazLink + "RFIDApi");
 				client.Timeout = -1;
@@ -364,7 +364,7 @@ namespace CYS.Controllers
 				var cevap = response.Content;
 				//var gelen = JsonConvert.DeserializeObject<string>(cevap);
 
-				var mevcutKupe = hctx.kupeAtamaTek("select * from kupeAtama where requestId = @requestId", new { requestId = requestId });
+				var mevcutKupe = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
 				mevcutKupe.kupeRfid = cevap;
 
 				hctx.kupeAtamaGuncelle(mevcutKupe);
@@ -393,7 +393,7 @@ namespace CYS.Controllers
 				};
 				hctx.agirlikOlcumEkle(agirlik);
 
-				var eklenenId = hctx.agirlikOlcumTek("select * from agirlikOlcum where requestId = @requestId", new { requestId = requestId });
+				var eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
 
 				var client = new RestClient(profileObj.cihazLink+"AgirlikApi");
 				client.Timeout = -1;
@@ -424,7 +424,7 @@ namespace CYS.Controllers
 		public JsonResult son5Hayvan()
 		{
 			HayvanCTX hctx = new HayvanCTX();
-			var son5 = hctx.hayvanList("select * from Hayvan where aktif = 1 order by id desc limit 5", null);
+			var son5 = hctx.hayvanList("select * from hayvan where aktif = 1 order by id desc limit 5", null);
 			var jsonObject = JsonConvert.SerializeObject(son5);
 			return Json(jsonObject);
 		}
@@ -432,7 +432,7 @@ namespace CYS.Controllers
 		public JsonResult tumHayvanlar(string q)
 		{
 			HayvanCTX hctx = new HayvanCTX();
-			var hepsi = hctx.hayvanList("select * from Hayvan where aktif = 1 order by id desc", null);
+			var hepsi = hctx.hayvanList("select * from hayvan where aktif = 1 order by id desc", null);
 			var jsonObject = JsonConvert.SerializeObject(hepsi);
 			return Json(jsonObject);
 		}

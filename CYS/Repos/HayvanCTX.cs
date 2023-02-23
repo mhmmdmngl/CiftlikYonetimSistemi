@@ -18,7 +18,7 @@ namespace CYS.Repos
 				{
 					item.user = uctx.userTek("select * from user where id = @id", new { id = item.userId });
 					item.kategori = kctx.KategoriTek("select * from kategori where id = @id", new {id = item.kategoriId});
-					item.ozellikler = hkuCTX.HayvanKriterUnsurList("select * from hayvanKriterUnsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = item.id });
+					item.ozellikler = hkuCTX.HayvanKriterUnsurList("select * from hayvankriterunsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = item.id });
 				}
 				return list;
 			}
@@ -38,7 +38,7 @@ namespace CYS.Repos
 				{
                     item.user = uctx.userTek("select * from user where id = @id", new { id = item.userId });
                     item.kategori = kctx.KategoriTek("select * from kategori where id = @id", new { id = item.kategoriId });
-					item.ozellikler = hkuCTX.HayvanKriterUnsurList("select * from hayvanKriterUnsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = item.id });
+					item.ozellikler = hkuCTX.HayvanKriterUnsurList("select * from hayvankriterunsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = item.id });
 
 				}
 				return item;

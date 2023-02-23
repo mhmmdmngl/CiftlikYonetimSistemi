@@ -13,7 +13,7 @@ namespace CYS.Repos
 				var list = connection.Query<KriterUnsur>(sorgu, param).ToList();
 				KriterCTX kctx = new KriterCTX();
 				foreach(var item in list)
-					item.kriter = kctx.kriterTek("select * from Kriter where id = @id", new { id = item.kriterId });
+					item.kriter = kctx.kriterTek("select * from kriter where id = @id", new { id = item.kriterId });
 
 				return list;
 			}
@@ -26,7 +26,7 @@ namespace CYS.Repos
 				var item = connection.Query<KriterUnsur>(sorgu, param).FirstOrDefault();
 				KriterCTX kctx = new KriterCTX();
 				if (item != null)
-					item.kriter = kctx.kriterTek("select * from Kriter where id = @id", new { id = item.kriterId });
+					item.kriter = kctx.kriterTek("select * from kriter where id = @id", new { id = item.kriterId });
 
 				return item;
 			}
@@ -36,7 +36,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into KriterUnsur (kriterId, unsurAdi) values (@kriterId, @unsurAdi)", kriter);
+				var item = connection.Execute("insert into kriterunsur (kriterId, unsurAdi) values (@kriterId, @unsurAdi)", kriter);
 				return item;
 			}
 		}
