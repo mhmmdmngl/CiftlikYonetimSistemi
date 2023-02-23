@@ -220,7 +220,7 @@ namespace CYS.Controllers
             List<hayvanTuru> ustKategoriList = new List<hayvanTuru>();
 			List<SelectListItem> itList = new List<SelectListItem>();
             ustKategoriCTX hctx = new ustKategoriCTX();
-            var list = hctx.ustKategoriList("select * from cys.ustKategori where isActive = 1", null);
+            var list = hctx.ustKategoriList("select * from ustkategori where isActive = 1", null);
             foreach (var item in list)
 			{
 				SelectListItem it = new SelectListItem() { Value = item.id.ToString(), Text = item.name };
@@ -253,7 +253,7 @@ namespace CYS.Controllers
             List<hayvanTuru> ustKategoriList = new List<hayvanTuru>();
 			// Add parts to the list.
 			ustKategoriCTX hctx = new ustKategoriCTX();
-			var list = hctx.ustKategoriList("select * from cys.ustKategori where isActive = 1",null);
+			var list = hctx.ustKategoriList("select * from ustkategori where isActive = 1",null);
 			foreach(var item in list)
 			{
                 ustKategoriList.Add(new hayvanTuru() { Id = item.id, Text = item.name });
@@ -296,7 +296,7 @@ namespace CYS.Controllers
 			HayvanKriterUnsurCTX hayvanKriterUnsurCTX = new HayvanKriterUnsurCTX();
 			KriterUnsurCTX kctx = new KriterUnsurCTX();
 
-			var varmi = kctx.kriterUnsurTek("SELECT kriterUnsur.* FROM kriter, kriterunsur, hayvankriterunsur, hayvan where hayvankriterunsur.kriterUnsurId = kriterUnsur.id and kriterunsur.kriterId = kriter.id and kriter.id = @kriterId and hayvanKriterUnsur.isActive = 1 and hayvan.id = @hayvanId and hayvan.id = hayvankriterunsur.hayvanId", new { hayvanId = hayvanId, kriterId = kriterId });
+			var varmi = kctx.kriterUnsurTek("SELECT kriterunsur.* FROM kriter, kriterunsur, hayvankriterunsur, hayvan where hayvankriterunsur.kriterUnsurId = kriterUnsur.id and kriterunsur.kriterId = kriter.id and kriter.id = @kriterId and hayvanKriterUnsur.isActive = 1 and hayvan.id = @hayvanId and hayvan.id = hayvankriterunsur.hayvanId", new { hayvanId = hayvanId, kriterId = kriterId });
 			if(varmi != null)
 			{
 				var mevcut = hayvanKriterUnsurCTX.HayvanKriterUnsurTek("select * from hayvankriterunsur where kriterUnsurId = @kriterUnsurId and hayvanId = @hayvanId and isActive = 1", new { hayvanId = hayvanId, kriterUnsurId = varmi.id });
