@@ -36,7 +36,7 @@ namespace CYS.Repos
         {
             using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
             {
-                var item = connection.Execute("insert into Kategori (ustKategoriId, kategoriAdi, resim) values (@ustKategoriId, @kategoriAdi, @resim)", kategori);
+                var item = connection.Execute("insert into kategori (ustKategoriId, kategoriAdi, resim) values (@ustKategoriId, @kategoriAdi, @resim)", kategori);
                 return item;
             }
         }
@@ -45,7 +45,7 @@ namespace CYS.Repos
         {
             using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
             {
-                var item = connection.Execute("update hayvan set ustKategoriId = @ustKategoriId, kategoriAdi = @kategoriAdi, resim = @resim, isActive = @isActive where id = @id", kategori);
+                var item = connection.Execute("update kategori set ustKategoriId = @ustKategoriId, kategoriAdi = @kategoriAdi, resim = @resim, isActive = @isActive where id = @id", kategori);
                 return item;
             }
         }

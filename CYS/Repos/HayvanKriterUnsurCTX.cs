@@ -15,8 +15,8 @@ namespace CYS.Repos
 				HayvanCTX hctx = new HayvanCTX();
 				foreach (var item in list)
 				{
-					item.kriterunsur = kctx.kriterUnsurTek("select * from KriterUnsur where id = @id", new { id = item.kriterUnsurId });
-					//item.hayvan = hctx.hayvanTek("select * from Hayvan where id = @id", new { id = item.hayvanId });
+					item.kriterunsur = kctx.kriterUnsurTek("select * from kriterunsur where id = @id", new { id = item.kriterUnsurId });
+					//item.hayvan = hctx.hayvanTek("select * from hayvan where id = @id", new { id = item.hayvanId });
 
 				}
 
@@ -33,8 +33,8 @@ namespace CYS.Repos
 				HayvanCTX hctx = new HayvanCTX();
 				if (item != null)
 				{
-					item.kriterunsur = kctx.kriterUnsurTek("select * from KriterUnsur where id = @id", new { id = item.kriterUnsurId });
-					//item.hayvan = hctx.hayvanTek("select * from Hayvan where id = @id", new { id = item.hayvanId });
+					item.kriterunsur = kctx.kriterUnsurTek("select * from kriterunsur where id = @id", new { id = item.kriterUnsurId });
+					//item.hayvan = hctx.hayvanTek("select * from hayvan where id = @id", new { id = item.hayvanId });
 				}
 				return item;
 			}
@@ -44,7 +44,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into hayvanKriterUnsur (hayvanId, kriterUnsurId) values (@hayvanId, @kriterUnsurId)", kriter);
+				var item = connection.Execute("insert into hayvankriterunsur (hayvanId, kriterUnsurId) values (@hayvanId, @kriterUnsurId)", kriter);
 				return item;
 			}
 		}
@@ -53,7 +53,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update HayvanKriterUnsur set hayvanId = @hayvanId, kriterUnsurId = @kriterUnsurId, isActive = @isActive where id = @id", hayvan);
+				var item = connection.Execute("update hayvankriterunsur set hayvanId = @hayvanId, kriterUnsurId = @kriterUnsurId, isActive = @isActive where id = @id", hayvan);
 				return item;
 			}
 		}
