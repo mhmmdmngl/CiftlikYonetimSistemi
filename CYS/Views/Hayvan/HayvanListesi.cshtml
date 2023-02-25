@@ -638,7 +638,17 @@
 				"requestId": guid
 			},
 			success: function (returnData) {
-
+				if (returnData["status"] == "error")
+				{
+					Swal.fire({
+						text: returnData["message"],
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							confirmButton: "btn btn-primary"
+						}
+					});
+				}
 			}
 		});
 	}
@@ -654,7 +664,17 @@
 				"requestId": guid
 			},
 			success: function (returnData) {
-
+				if (returnData["status"] == "error")
+				{
+					Swal.fire({
+						text: returnData["message"],
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							confirmButton: "btn btn-primary"
+						}
+					});
+				}
 			}
 		});
 		

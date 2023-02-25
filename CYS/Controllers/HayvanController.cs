@@ -347,15 +347,20 @@ namespace CYS.Controllers
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
 				kupeatamaCTX hctx = new kupeatamaCTX();
-				KupeAtama kupe = new KupeAtama()
-				{
-					requestId = requestId,
-					userId = userObj.id,
-					kupeRfid = ""
-				};
-				hctx.kupeAtamaEkle(kupe);
 
 				var eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
+				if(eklenenId == null)
+				{
+					KupeAtama kupe = new KupeAtama()
+					{
+						requestId = requestId,
+						userId = userObj.id,
+						kupeRfid = ""
+					};
+					hctx.kupeAtamaEkle(kupe);
+					eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
+				}
+				
 
 				var client = new RestClient(profileObj.cihazLink + "RFIDApi");
 				client.Timeout = -1;
@@ -363,12 +368,14 @@ namespace CYS.Controllers
 				IRestResponse response = client.Execute(request);
 				var cevap = response.Content;
 				//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+				if (cevap == "")
+					return Json(new { status = "error", message = "Okuma işlemi gerçekleştirilemedi" });
 
-				var mevcutKupe = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
-				mevcutKupe.kupeRfid = cevap;
+				eklenenId.kupeRfid = cevap;
 
-				hctx.kupeAtamaGuncelle(mevcutKupe);
+				hctx.kupeAtamaGuncelle(eklenenId);
 				return Json("");
+
 			}
 			return Json("");
 
@@ -385,22 +392,27 @@ namespace CYS.Controllers
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
 				AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
-				AgirlikOlcum agirlik = new AgirlikOlcum()
-				{
-					requestId = requestId,
-					userId = userObj.id,
-					agirlikOlcumu = ""
-				};
-				hctx.agirlikOlcumEkle(agirlik);
-
 				var eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
-
+				if(eklenenId == null)
+				{
+					AgirlikOlcum agirlik = new AgirlikOlcum()
+					{
+						requestId = requestId,
+						userId = userObj.id,
+						agirlikOlcumu = ""
+					};
+					hctx.agirlikOlcumEkle(agirlik);
+					eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
+				}
+				
 				var client = new RestClient(profileObj.cihazLink+"AgirlikApi");
 				client.Timeout = -1;
 				var request = new RestRequest(Method.GET);
 				IRestResponse response = client.Execute(request);
 				var cevap = response.Content;
 				//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+				if(cevap == "")
+					return Json(new { status = "error", message = "Okuma işlemi gerçekleştirilemedi" });
 
 				eklenenId.agirlikOlcumu = cevap;
 
