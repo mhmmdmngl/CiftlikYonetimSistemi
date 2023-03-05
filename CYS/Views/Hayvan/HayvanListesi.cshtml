@@ -367,7 +367,10 @@
 														<a href="javascript:modalAc(@item.id)"  class="menu-link px-3">Özellik Ekle</a>
 													</div>
 													<div class="menu-item px-3">
-														<a href="javascript:ustSoyModalAc(@item.id)" class="menu-link px-3">Üst Soy</a>
+														<a href="javascript:ustSoyModalAc(@item.id)" class="menu-link px-3">Üst Soy Ekle</a>
+													</div>
+													<div class="menu-item px-3">
+														<a href="javascript:soyModalAc(@item.id)" class="menu-link px-3">Soy İncele</a>
 													</div>
 													<!--begin::Menu item-->
 													<div class="menu-item px-3">
@@ -438,6 +441,7 @@
 <!--begin::Page Custom Javascript(used by this page)-->
 @await Component.InvokeAsync("OzellikEkle")
 @await Component.InvokeAsync("UstSoy")
+@await Component.InvokeAsync("SoyGoster")
 
 
 
@@ -540,6 +544,11 @@
 
 	}
 
+	function soyModalAc(id) {
+		document.getElementById("hyvnId").value = id;
+		$("#soyModal").modal('show');
+	}
+
 	function ustSoyModalAc(id) {
 		document.getElementById("idHayvanSoy").value = id;
 		sonhayvanlar();
@@ -638,8 +647,7 @@
 				"requestId": guid
 			},
 			success: function (returnData) {
-				if (returnData["status"] == "error")
-				{
+				if (returnData["status"] == "error") {
 					Swal.fire({
 						text: returnData["message"],
 						icon: "error",

@@ -2,7 +2,9 @@
 using CYS.Repos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.ObjectModelRemoting;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Utilities;
 using RestSharp;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -447,6 +449,70 @@ namespace CYS.Controllers
 			var hepsi = hctx.hayvanList("select * from hayvan where aktif = 1 order by id desc", null);
 			var jsonObject = JsonConvert.SerializeObject(hepsi);
 			return Json(jsonObject);
+		}
+
+		public JsonResult ustSoyEkleJson(int ustHayvanId, int hayvanId)
+		{
+			if (ustHayvanId == hayvanId)
+				return Json("");
+			UstSoyCTX usctx = new UstSoyCTX();
+			var VarMi = usctx.soyagaciTek("select * from soyagaci where ustHayvanId = @ustHayvanId and hayvanId = @hayvanId and isActive = 1", new { ustHayvanId = ustHayvanId, hayvanId = hayvanId });
+			if (VarMi != null)
+				return Json("");
+			soyagaci us = new soyagaci()
+			{
+				ustHayvanId = ustHayvanId,
+				hayvanId = hayvanId
+			};
+			usctx.soyagaciEkle(us);
+			return Json("");
+		}
+
+		public class miniTur
+		{
+			public int id { get; set; }
+
+			public string HayvanTur { get; set; }
+			public string AltTur { get; set; }
+			public string RFIDKodu { get; set; }
+			public string Agirlik { get; set; }
+			public string img { get; set; }
+
+		}
+		public JsonResult hayvanAkraba(int hayvanId)
+		{
+			UstSoyCTX usctx = new UstSoyCTX();
+			List<soyagaci> soyList = new List<soyagaci>();
+			var ebeveyns = usctx.soyagaciList("select * from soyagaci where hayvanId = @hayvanId and isActive = 1", new { hayvanId = hayvanId });
+			soyList.AddRange(ebeveyns);
+			foreach(var item in ebeveyns)
+			{
+				soyList.AddRange( usctx.soyagaciList("select * from soyagaci where ustHayvanId = @ustHayvanId and isActive = 1", new {ustHayvanId = item.ustHayvanId}));
+			}
+			soyList.AddRange(usctx.soyagaciList("select * from soyagaci where ustHayvanId = @ustHayvanId and isActive = 1", new { ustHayvanId = hayvanId }));
+			List<miniTur> minTurList = new List<miniTur>();
+			int flag = 0;
+			foreach(var item in soyList)
+			{
+				miniTur mt = new miniTur();
+
+				if (flag == 0)
+					flag = 1;
+	
+
+				mt.id = item.id;
+				mt.HayvanTur = item.hayvan.kategori.ustkategori.name;
+				mt.AltTur = item.hayvan.kategori.kategoriAdi;
+				mt.RFIDKodu = item.hayvan.rfidKodu;
+				mt.Agirlik = item.hayvan.agirlik;
+				mt.img = "https://cdn.balkan.app/shared/5.jpg";
+				minTurList.Add(mt);
+
+			}
+			
+			var userObj = System.Text.Json.JsonSerializer.Serialize(minTurList);
+			var sey = Json(userObj);
+			return sey;
 		}
 
 	}

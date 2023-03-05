@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CYS.Repos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CYS.ComponentManager
 {
@@ -6,7 +7,9 @@ namespace CYS.ComponentManager
 	{
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
-			return View();
+			HayvanCTX usctx = new HayvanCTX();
+			var hList = usctx.hayvanList("select * from Hayvan where aktif = 1", null);
+			return View(hList);
 		}
 	}
 }
