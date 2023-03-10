@@ -373,6 +373,7 @@ namespace CYS.Controllers
 				if (cevap == "")
 					return Json(new { status = "error", message = "Okuma işlemi gerçekleştirilemedi" });
 
+
 				eklenenId.kupeRfid = cevap;
 
 				hctx.kupeAtamaGuncelle(eklenenId);
