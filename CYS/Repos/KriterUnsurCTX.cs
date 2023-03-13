@@ -45,7 +45,7 @@ namespace CYS.Repos
 		//{
 		//	using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 		//	{
-		//		var item = connection.Execute("update Kriter set kriterAdi = @kriterAdi,isActive = @isActive where id = @id", kriter);
+		//		var item = connection.Execute("update kriter set kriterAdi = @kriterAdi,isActive = @isActive where id = @id", kriter);
 		//		return item;
 		//	}
 		//}
