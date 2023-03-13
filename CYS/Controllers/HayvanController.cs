@@ -76,7 +76,7 @@ namespace CYS.Controllers
 			}
 		}
 
-		public JsonResult agirlikDondur()
+		public JsonResult agirlikDondur(string requestId)
 		{
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
@@ -84,7 +84,7 @@ namespace CYS.Controllers
 			{
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				AgirlikOlcumCTX actx = new AgirlikOlcumCTX();
-				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikolcum where userId = @userId order by id desc limit 1", new { userId = userObj.id });
+				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikolcum where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
 				if(sonAgirlik != null)
 				{
 					return Json(new { status = sonAgirlik.agirlikOlcumu, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
@@ -95,7 +95,7 @@ namespace CYS.Controllers
 
 		}
 
-		public JsonResult rfidDondur()
+		public JsonResult rfidDondur(string requestId)
 		{
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
@@ -103,7 +103,7 @@ namespace CYS.Controllers
 			{
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				kupeatamaCTX actx = new kupeatamaCTX();
-				var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId order by id desc limit 1", new { userId = userObj.id });
+				var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
 				if (sonAgirlik != null)
 				{
 					return Json(new { status = sonAgirlik.kupeRfid, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
@@ -115,7 +115,7 @@ namespace CYS.Controllers
 
 		}
 
-		public JsonResult hayvanEkleJson(string rfid, string hayvanAdi, int cinsiyet, int altTurId)
+		public JsonResult hayvanEkleJson(string rfid, string hayvanAdi, int cinsiyet, int altTurId, string agirlik)
 		{
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
@@ -140,7 +140,7 @@ namespace CYS.Controllers
 				{
 					cinsiyet = cinsiyetS,
 					kupeIsmi = hayvanAdi,
-					agirlik = "Belli Değil",
+					agirlik = agirlik,
 					rfidKodu = rfid,
 					userId = userObj.id,
                     kategoriId = Convert.ToInt32(altTurId)

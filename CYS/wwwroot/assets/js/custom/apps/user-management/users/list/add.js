@@ -72,7 +72,7 @@ var KTUsersAddUser = function () {
                                 url: "/Hayvan/hayvanEkleJson/",
                                 type: "POST",
                                 data: {
-                                    "rfid": form.querySelector('[name="user_name"]').value, "hayvanAdi": form.querySelector('[name="user_email"]').value, "cinsiyet": form.querySelector('input[name="user_role"]:checked').value, "altTurId": altturId
+                                    "rfid": form.querySelector('[name="user_name"]').value, "hayvanAdi": form.querySelector('[name="user_email"]').value, "cinsiyet": form.querySelector('input[name="user_role"]:checked').value, "altTurId": altturId, "agirlik": form.querySelector('[name="agirlik-name"]').value
                                 },
                                 success: function (returnData) {
 
