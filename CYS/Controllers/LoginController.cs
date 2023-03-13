@@ -31,8 +31,7 @@ namespace CYS.Controllers
 			{
 				ProfileCTX profileCTX = new ProfileCTX();
 				var profilCek = profileCTX.profilTek("select * from profile where userId = @userId", new { userId = userVarMi.id });
-				profilCek.cihazLink = profilCek.cihazLink.Replace("tcp", "http");
-
+				profilCek.cihazLink = ReplaceFirst(profilCek.cihazLink, "tcp", "http");
 				var userJson = JsonConvert.SerializeObject(userVarMi);
 				var profileJson = JsonConvert.SerializeObject(profilCek);
 
@@ -43,6 +42,16 @@ namespace CYS.Controllers
 			}
 			return Json(new { status = "Error", message = "Kullanıcı Adı ya da Parola Yanlış" });
 
+		}
+
+		public string ReplaceFirst(string text, string search, string replace)
+		{
+			int pos = text.IndexOf(search);
+			if (pos < 0)
+			{
+				return text;
+			}
+			return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
 		}
 
 	}

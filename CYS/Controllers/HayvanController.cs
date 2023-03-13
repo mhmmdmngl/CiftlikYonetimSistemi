@@ -526,7 +526,7 @@ namespace CYS.Controllers
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
 
-				var client = new RestClient(profileObj.cihazLink + "/Secim?kapi="+ kapiId.ToString());
+				var client = new RestClient(profileObj.cihazLink + "/Secim?secenek="+ kapiId.ToString());
 				client.Timeout = -1;
 				var request = new RestRequest(Method.GET);
 				IRestResponse response = client.Execute(request);
