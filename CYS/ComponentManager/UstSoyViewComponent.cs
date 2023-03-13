@@ -8,7 +8,7 @@ namespace CYS.ComponentManager
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
 			HayvanCTX usctx = new HayvanCTX();
-			var hList = usctx.hayvanList("select * from Hayvan where aktif = 1", null);
+			var hList = usctx.hayvanList("select * from hayvan where aktif = 1", null);
 			return View(hList);
 		}
 	}

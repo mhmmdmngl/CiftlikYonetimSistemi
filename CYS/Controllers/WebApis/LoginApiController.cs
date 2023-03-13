@@ -25,7 +25,7 @@ namespace CYS.Controllers.WebApis
 			var userVarMi = userCTX.userTek("select * from user where id = @id ", new { id = userId});
 			if (userVarMi != null) { 
 				ProfileCTX pctx = new ProfileCTX();
-				var mevcutProfil = pctx.profilTek("select * from Profile where userId = @userId", new {userId = userId});
+				var mevcutProfil = pctx.profilTek("select * from profile where userId = @userId", new {userId = userId});
 				mevcutProfil.cihazLink= link;
 				pctx.profilGuncelle(mevcutProfil);
 			}

@@ -467,6 +467,7 @@
 			url: "/Hayvan/rfidDondur",
 			type: "POST",
 			async: true,
+			data: { "requestId": guid },
 			success: function (returnData) {
 
 				if (returnData["status"] == "0" || returnData["status"] == "-1") {
@@ -510,6 +511,7 @@
 			url: "/Hayvan/agirlikDondur",
 			type: "POST",
 			async: true,
+			data: { "requestId": guid },
 			success: function (returnData) {
 				if (returnData["status"] == "0" || returnData["status"] == "-1") {
 
