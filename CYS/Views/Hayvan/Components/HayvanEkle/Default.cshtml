@@ -99,7 +99,7 @@
 						<div class="fv-row mb-4 row">
 							<div class="col-12">
 
-								<input type="button" onclick="kapiAc(5);" class="form-control  mb-3  btn btn-success" value="Kapı 5" />
+								<input type="button" onclick="kapiAc(5);" class="form-control  mb-3  btn btn-primary" value="Kapı 5" />
 							</div>
 							
 
@@ -227,6 +227,31 @@
 <script>
 	function kapiAc(id)
 	{
-		alert(id + " numaralı kapı tetiklendi");
+		$.ajax({
+			url: "/Hayvan/kapiTetikle",
+			dataType: "json",
+			type: "POST",
+			data: {
+				"kapiId": id
+			},
+			success: function (returnData) {
+
+				if (returnData["status"] == "error" || returnData["status"] == "-1") {
+					Swal.fire({
+						text: returnData["message"],
+						icon: "error",
+						buttonsStyling: false,
+						confirmButtonText: "Tekrar Açmayı Tene",
+						customClass: {
+							confirmButton: "btn btn-primary"
+						}
+					});
+					
+
+				}
+				
+			}
+		});
+
 	}
 </script>

@@ -516,5 +516,29 @@ namespace CYS.Controllers
 			return sey;
 		}
 
+
+		public JsonResult kapiTetikle(int kapiId)
+		{
+			var user = HttpContext.Session.GetString("user");
+			var profile = HttpContext.Session.GetString("profile");
+			if (user != null && profile != null)
+			{
+				var userObj = JsonConvert.DeserializeObject<User>(user);
+				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+
+				var client = new RestClient(profileObj.cihazLink + "/Secim?kapi="+ kapiId.ToString());
+				client.Timeout = -1;
+				var request = new RestRequest(Method.GET);
+				IRestResponse response = client.Execute(request);
+				var cevap = response.Content;
+				//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+				if (cevap == "")
+					return Json(new { status = "error", message = "Kapı Açma İşlemi gerçekleştirilemedi" });
+
+				
+				return Json("");
+			}
+			return Json("");
+		}
 	}
 }
