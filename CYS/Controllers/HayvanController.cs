@@ -385,7 +385,6 @@ namespace CYS.Controllers
 
 		}
 
-
 		public JsonResult agirlikIstekJson(string requestId)
 		{
 			var user = HttpContext.Session.GetString("user");
