@@ -362,9 +362,9 @@ namespace CYS.Controllers
 					hctx.kupeAtamaEkle(kupe);
 					eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
 				}
-				
 
-				var client = new RestClient(profileObj.cihazLink + "RFIDApi");
+
+				var client = new RestClient(profileObj.cihazLink + "/RFIDApi");
 				client.Timeout = -1;
 				var request = new RestRequest(Method.GET);
 				IRestResponse response = client.Execute(request);
@@ -408,7 +408,7 @@ namespace CYS.Controllers
 					eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
 				}
 				
-				var client = new RestClient(profileObj.cihazLink+"AgirlikApi");
+				var client = new RestClient(profileObj.cihazLink+"/AgirlikApi");
 				client.Timeout = -1;
 				var request = new RestRequest(Method.GET);
 				IRestResponse response = client.Execute(request);

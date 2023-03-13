@@ -31,6 +31,8 @@ namespace CYS.Controllers
 			{
 				ProfileCTX profileCTX = new ProfileCTX();
 				var profilCek = profileCTX.profilTek("select * from profile where userId = @userId", new { userId = userVarMi.id });
+				profilCek.cihazLink = profilCek.cihazLink.Replace("tcp", "http");
+
 				var userJson = JsonConvert.SerializeObject(userVarMi);
 				var profileJson = JsonConvert.SerializeObject(profilCek);
 

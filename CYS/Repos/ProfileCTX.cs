@@ -37,7 +37,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update profile set userId = @userId,companyName = @companyName,companyDescription = @companyDescription,companyId = @companyId, address = @address,phoneNumber = @phoneNumber,cellPhoneNumber = @cellPhoneNumber,logo = @logo where id = @id", profil);
+				var item = connection.Execute("update profile set userId = @userId,companyName = @companyName,companyDescription = @companyDescription,address = @address,phoneNumber = @phoneNumber,cellPhoneNumber = @cellPhoneNumber,logo = @logo, cihazLink = @cihazLink where id = @id", profil);
 				return item;
 			}
 		}

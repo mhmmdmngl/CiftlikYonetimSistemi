@@ -14,7 +14,21 @@ namespace CYS.Controllers.WebApis
 		{
 			UserCTX userCTX = new UserCTX();
 			var userVarMi = userCTX.userTek("select * from user where username = @username and password = @password", new { username, password });
-			if(userVarMi != null) { return 1; }
+			if(userVarMi != null) { return userVarMi.id; }
+			return 0;
+		}
+
+		[HttpPut]
+		public int Update(int userId, string link)
+		{
+			UserCTX userCTX = new UserCTX();
+			var userVarMi = userCTX.userTek("select * from user where id = @id ", new { id = userId});
+			if (userVarMi != null) { 
+				ProfileCTX pctx = new ProfileCTX();
+				var mevcutProfil = pctx.profilTek("select * from Profile where userId = @userId", new {userId = userId});
+				mevcutProfil.cihazLink= link;
+				pctx.profilGuncelle(mevcutProfil);
+			}
 			return 0;
 		}
 	}
