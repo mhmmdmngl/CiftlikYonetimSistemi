@@ -450,9 +450,9 @@
 	var olcum = 0;
 	let guid = "";
 	let agirlik = "";
-
+	let olcumFlag = 0;
 	setInterval(function () {
-		rfidGetir();
+		//rfidGetir();
 		agirlikGetir();
 
 	}, 1000);
@@ -474,8 +474,59 @@
 
 
 				}
+				else if (returnData["status"] == "mevcut")
+				{
+					if(olcumFlag == 0)
+					{
+						var gelenSonuc = JSON.parse(returnData["message"]);
+						document.getElementById("rfidTxt").value = gelenSonuc.rfidKodu;
+						//document.getElementById("agirlikTxt").value = JSON.parse(returnData["message"]).agirlik;
+						document.getElementById("lblTur").value = gelenSonuc.kategori.ustkategori.id;
+						var item = document.getElementById("lblaltTur");
+						removeOptions(item);
+						$.ajax({
+							url: "/Hayvan/hayvanAltTurJson",
+							dataType: "json",
+							type: "POST",
+							data: {
+								"value": gelenSonuc.kategori.ustkategori.id
+							},
+							success: function (returnData) {
+								var gelen = JSON.parse(returnData);
+								for (let i = 0; i < gelen.length; i++) {
+									var opt = document.createElement("option");
+									opt.value = gelen[i].id;
+									opt.text = gelen[i].kategoriAdi; // whatever property it has
+									item.appendChild(opt);
+								}
+							}
+						});
+
+						document.getElementById("lblaltTur").value = gelenSonuc.kategoriId;
+						document.getElementById("txtHayvanAd").value = gelenSonuc.kupeIsmi;
+						switch(gelenSonuc.cinsiyet)
+						{
+							case "Erkek":
+								document.getElementById("kt_modal_update_role_option_0").checked = true;
+								break;
+							case "Dişi":
+								document.getElementById("kt_modal_update_role_option_1").checked = true;
+								break;
+							case "Bilinmeyen":
+								document.getElementById("kt_modal_update_role_option_2").checked = true;
+								break;
+
+						}
+						document.getElementById("btnIdd").innerText = "Düzenle";
+						olcumFlag = 1;
+					}
+					
+
+
+				}
 				else {
-					item.value = returnData["status"];
+					document.getElementById("btnIdd").innerText = "Ekle";
+					document.getElementById("rfidTxt").value = returnData["status"];
 					tarih.innerHTML = "Son Okuma Tarihi: " + returnData["tarih"];
 				}
 			}
@@ -503,10 +554,18 @@
 	}
 
 	function agirlikGetir() {
-
+		girisKapisi = 0;
 		var item = document.getElementById("agirlikTxt");
 		if (guid == "")
 			return;
+		agirlikMutex = 0;
+		if(agirlikMutex == 0)
+		{
+			kapiAc(6);
+			girisKapisi = 1;
+			agirlikMutex = 1;
+		}
+		agirlikIstek();
 		$.ajax({
 			url: "/Hayvan/agirlikDondur",
 			type: "POST",
@@ -520,6 +579,21 @@
 				else {
 
 					item.value = returnData["status"];
+					if(item.value != "")
+					{
+						let deger = Parse.Int(item.value);
+						if(deger > 5)
+						{
+							alert("5'ten büyük değer yok");
+							if(girisKapisi == 1)
+							{
+								kapiAc(17);
+								girisKapisi = 0;
+							}
+							rfIdIstek();
+							rfidGetir();
+						}
+					}
 				}
 			}
 		});
@@ -649,16 +723,16 @@
 				"requestId": guid
 			},
 			success: function (returnData) {
-				if (returnData["status"] == "error") {
-					Swal.fire({
-						text: returnData["message"],
-						icon: "error",
-						buttonsStyling: false,
-						customClass: {
-							confirmButton: "btn btn-primary"
-						}
-					});
-				}
+				//if (returnData["status"] == "error") {
+				//	Swal.fire({
+				//		text: returnData["message"],
+				//		icon: "error",
+				//		buttonsStyling: false,
+				//		customClass: {
+				//			confirmButton: "btn btn-primary"
+				//		}
+				//	});
+				//}
 			}
 		});
 	}
@@ -676,14 +750,19 @@
 			success: function (returnData) {
 				if (returnData["status"] == "error")
 				{
-					Swal.fire({
-						text: returnData["message"],
-						icon: "error",
-						buttonsStyling: false,
-						customClass: {
-							confirmButton: "btn btn-primary"
-						}
-					});
+					//Swal.fire({
+					//	text: returnData["message"],
+					//	icon: "error",
+					//	buttonsStyling: false,
+					//	customClass: {
+					//		confirmButton: "btn btn-primary"
+					//	}
+					//});
+					return false;
+				}
+				else
+				{
+					return true;
 				}
 			}
 		});
