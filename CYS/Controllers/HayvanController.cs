@@ -106,6 +106,14 @@ namespace CYS.Controllers
 				var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
 				if (sonAgirlik != null)
 				{
+					HayvanCTX hctx = new HayvanCTX();
+					var hayvanVarmi = hctx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = sonAgirlik.kupeRfid });
+					if(hayvanVarmi != null)
+					{
+						var mevcutHayvan = System.Text.Json.JsonSerializer.Serialize(hayvanVarmi);
+						return Json(new { status = "mevcut", message = mevcutHayvan });
+
+					}
 					return Json(new { status = sonAgirlik.kupeRfid, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
 				}
 				return Json(new {status = "0"});
@@ -136,6 +144,27 @@ namespace CYS.Controllers
 				}
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				HayvanCTX actx = new HayvanCTX();
+				var hayvanVarMi = actx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu", new { rfidKodu = rfid });
+				if(hayvanVarMi != null)
+				{
+					hayvanVarMi.cinsiyet = cinsiyetS;
+					hayvanVarMi.kupeIsmi = hayvanAdi;
+					hayvanVarMi.agirlik = agirlik;
+					hayvanVarMi.rfidKodu = rfid;
+					hayvanVarMi.userId = userObj.id;
+					hayvanVarMi.kategoriId = Convert.ToInt32(altTurId);
+
+					actx.hayvanGuncelle(hayvanVarMi);
+					AgirlikHayvanCTX ahctx = new AgirlikHayvanCTX();
+					agirlikHayvan ah = new agirlikHayvan()
+					{
+						hayvanId = hayvanVarMi.id,
+						agirlikId = hayvanVarMi.agirlik
+					};
+					ahctx.agirlikHayvanEkle(ah);
+					return Json(new { status = "Success", message = "Mevcut Hayvan Başarıyla Güncellendi" });
+
+				}
 				Hayvan hy = new Hayvan()
 				{
 					cinsiyet = cinsiyetS,
@@ -146,6 +175,15 @@ namespace CYS.Controllers
                     kategoriId = Convert.ToInt32(altTurId)
                 };
 				actx.hayvanEkle(hy);
+				var eklenenson = actx.hayvanTek("select * from Hayvan order by id desc limit 1", null);
+				AgirlikHayvanCTX ahctx1 = new AgirlikHayvanCTX();
+				agirlikHayvan ah1 = new agirlikHayvan()
+				{
+					hayvanId = eklenenson.id,
+					agirlikId = eklenenson.agirlik
+				};
+				ahctx1.agirlikHayvanEkle(ah1);
+
 				return Json(new { status = "Success", message = "Hayvan Başarıyla Eklendi" });
 
 			}
@@ -532,7 +570,7 @@ namespace CYS.Controllers
 				var cevap = response.Content;
 				//var gelen = JsonConvert.DeserializeObject<string>(cevap);
 				if (cevap == "")
-					return Json(new { status = "error", message = "Kapı Açma İşlemi gerçekleştirilemedi" });
+					return Json("");
 
 				
 				return Json("");

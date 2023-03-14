@@ -133,7 +133,7 @@
 							<label class="required fw-bold fs-6 mb-2">İsim</label>
 							<!--end::Label-->
 							<!--begin::Input-->
-							<input type="text" name="user_email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Hayvan İsmi" value="" />
+							<input type="text" name="user_email" id="txtHayvanAd" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Hayvan İsmi" value="" />
 							<!--end::Input-->
 						</div>
 						<!--end::Input group-->
@@ -204,8 +204,8 @@
 					<!--begin::Actions-->
 					<div class="text-center pt-15">
 						<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Temizle</button>
-						<button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-							<span class="indicator-label">Ekle</span>
+						<button type="submit" class="btn btn-primary"  data-kt-users-modal-action="submit">
+							<span class="indicator-label" id="btnIdd">Ekle</span>
 							<span class="indicator-progress">
 								Lütfen Bekleyin
 								<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
