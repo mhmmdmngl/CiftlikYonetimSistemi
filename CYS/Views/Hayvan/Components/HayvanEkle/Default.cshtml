@@ -41,25 +41,6 @@
 						<div class="fv-row mb-4 row">
 							<div class="col-8">
 								<!--begin::Label-->
-								<label class="required fw-bold fs-6 mb-2">Eid</label>
-								<!--end::Label-->
-								<!--begin::Input-->
-								<input type="text" name="user_name" id="rfidTxt" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="RFID Okutun" />
-								<label class="fw-bold fs-6 mb-2" id="tarihlbl"></label>
-							</div>
-							<div class="col-4">
-								<label class="required fw-bold fs-6 mb-2">Küpe Oku</label>
-
-								<input type="button" onclick="rfIdIstek()" class="form-control  mb-3  btn btn-primary" value="Küpe Oku" />
-
-							</div>
-							
-							<!--end::Input-->
-						</div>
-
-						<div class="fv-row mb-4 row">
-							<div class="col-8">
-								<!--begin::Label-->
 								<label class="required fw-bold fs-6 mb-2">Ağırlık</label>
 								<!--end::Label-->
 								<!--begin::Input-->
@@ -69,11 +50,26 @@
 							<div class="col-4">
 								<label class="required fw-bold fs-6 mb-2">Ağırlık Ölç</label>
 
-								<input type="button" onclick="agirlikIstek()" class="form-control  mb-3  btn btn-success" value="Ağırlık Ölç" />
+								<input type="button" onclick="process()" id ="btnBasla" class="form-control  mb-3  btn btn-success" value="Başla" />
 
 							</div>
 							<!--end::Input-->
 						</div>
+
+						<div class="fv-row mb-4 row">
+							<div class="col-12">
+								<!--begin::Label-->
+								<label class="required fw-bold fs-6 mb-2">Eid</label>
+								<!--end::Label-->
+								<!--begin::Input-->
+								<input type="text" name="user_name" id="rfidTxt" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="RFID Okutun" />
+								<label class="fw-bold fs-6 mb-2" id="tarihlbl"></label>
+							</div>
+							
+							
+							<!--end::Input-->
+						</div>
+
 						<div class="fv-row mb-4 row">
 							<div class="col-3">
 								

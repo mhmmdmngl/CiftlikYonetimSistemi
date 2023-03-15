@@ -82,7 +82,7 @@ namespace CYS.Controllers
 			var profile = HttpContext.Session.GetString("profile");
 			if(user != null && profile != null)
 			{
-				var userObj = JsonConvert.DeserializeObject<User>(user);
+			var userObj = JsonConvert.DeserializeObject<User>(user);
 				AgirlikOlcumCTX actx = new AgirlikOlcumCTX();
 				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikolcum where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
 				if(sonAgirlik != null)
@@ -426,6 +426,9 @@ namespace CYS.Controllers
 
 		public JsonResult agirlikIstekJson(string requestId)
 		{
+			if(requestId == null)
+				return Json(new { status = "error", message = "Request Id Null" });
+
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
 			if (user != null && profile != null)
@@ -464,6 +467,45 @@ namespace CYS.Controllers
 
 			
 		}
+
+		public JsonResult agirlikIsteksadece()
+		{
+			
+			var user = HttpContext.Session.GetString("user");
+			var profile = HttpContext.Session.GetString("profile");
+			if (user != null && profile != null)
+			{
+				try
+				{
+					var userObj = JsonConvert.DeserializeObject<User>(user);
+					var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+					var client = new RestClient(profileObj.cihazLink + "/AgirlikApi");
+					client.Timeout = -1;
+					var request = new RestRequest(Method.GET);
+					IRestResponse response = client.Execute(request);
+					var cevap = response.Content;
+					//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+					if (cevap == "")
+						return Json("4.5");
+
+
+
+					return Json(cevap);
+				}
+				catch
+				{
+					return Json("4.5");
+
+				}
+
+
+
+			}
+			return Json("");
+
+
+		}
+
 
 		public JsonResult hayvaninOzellikleriJson(int hayvanId)
 		{

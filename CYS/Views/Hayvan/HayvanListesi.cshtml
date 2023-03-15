@@ -451,86 +451,170 @@
 	let guid = "";
 	let agirlik = "";
 	let olcumFlag = 0;
-	setInterval(function () {
+	let processMutex = 0;
+	let agirlikMutex = 0;
+	var mevcutInterval = setInterval(function () {
 		//rfidGetir();
 		agirlikGetir();
 
 	}, 1000);
 
-	function rfidGetir()
+	var rfidInterval = setInterval(function () {
+		rfidGetir();
+
+	}, 1000);
+
+	clearInterval(rfidInterval);
+
+	function process()
 	{
+		processMutex = 1;
+		agirlikMutex = 1;
+		document.getElementById("btnBasla").disabled = true;
+		kapiAc(6);
+		mevcutInterval = setInterval(function () {
+			//rfidGetir();
+			agirlikGetir();
+
+		}, 1000);
+	}
+
+	function agirlikCheck(secim)
+	{
+		if(processMutex == 1)
+			return;
+		$.ajax({
+			url: "/Hayvan/agirlikIsteksadece",
+			type: "POST",
+			async: false,
+			success: function (returnData) {
+				console.log(returnData);
+				if (returnData["status"] == "0" || returnData["status"] == "-1" || returnData["status"] == "") {
+
+
+				}
+				else {
+					gelenOlcum = parseFloat(returnData);
+					clearInterval(agirlikKontrolInterval);
+				    document.getElementById("btnBasla").disabled = false;
+
+				}
+			}
+		});
+
+
+	}
+
+	function rfidGetir() {
 		var item = document.getElementById("rfidTxt");
 		var tarih = document.getElementById("tarihlbl");
-		if(guid == "")
+		if(processMutex == 0)
 			return;
+		if (guid == "")
+			return;
+		rfIdIstek();
 		$.ajax({
 			url: "/Hayvan/rfidDondur",
 			type: "POST",
-			async: true,
+			async: false,
 			data: { "requestId": guid },
 			success: function (returnData) {
 
 				if (returnData["status"] == "0" || returnData["status"] == "-1") {
 
-
 				}
-				else if (returnData["status"] == "mevcut")
-				{
-					if(olcumFlag == 0)
-					{
-						var gelenSonuc = JSON.parse(returnData["message"]);
-						document.getElementById("rfidTxt").value = gelenSonuc.rfidKodu;
-						//document.getElementById("agirlikTxt").value = JSON.parse(returnData["message"]).agirlik;
-						document.getElementById("lblTur").value = gelenSonuc.kategori.ustkategori.id;
-						var item = document.getElementById("lblaltTur");
-						removeOptions(item);
-						$.ajax({
-							url: "/Hayvan/hayvanAltTurJson",
-							dataType: "json",
-							type: "POST",
-							data: {
-								"value": gelenSonuc.kategori.ustkategori.id
-							},
-							success: function (returnData) {
-								var gelen = JSON.parse(returnData);
-								for (let i = 0; i < gelen.length; i++) {
-									var opt = document.createElement("option");
-									opt.value = gelen[i].id;
-									opt.text = gelen[i].kategoriAdi; // whatever property it has
-									item.appendChild(opt);
-								}
-							}
-						});
-
-						document.getElementById("lblaltTur").value = gelenSonuc.kategoriId;
-						document.getElementById("txtHayvanAd").value = gelenSonuc.kupeIsmi;
-						switch(gelenSonuc.cinsiyet)
-						{
-							case "Erkek":
-								document.getElementById("kt_modal_update_role_option_0").checked = true;
-								break;
-							case "Dişi":
-								document.getElementById("kt_modal_update_role_option_1").checked = true;
-								break;
-							case "Bilinmeyen":
-								document.getElementById("kt_modal_update_role_option_2").checked = true;
-								break;
-
-						}
-						document.getElementById("btnIdd").innerText = "Düzenle";
+				else if (returnData["status"] == "mevcut") {
+					if (olcumFlag == 0) {
+						duzenle(returnData);
 						olcumFlag = 1;
-					}
-					
 
+					}
+					clearInterval(sadeceRFIDInterval);
+					processMutex = 0;
+					sonDuzenle();
+					
 
 				}
 				else {
-					document.getElementById("btnIdd").innerText = "Ekle";
-					document.getElementById("rfidTxt").value = returnData["status"];
-					tarih.innerHTML = "Son Okuma Tarihi: " + returnData["tarih"];
+					if(returnData["status"] != "")
+					{
+						document.getElementById("btnIdd").innerText = "Ekle";
+						document.getElementById("rfidTxt").value = returnData["status"];
+						tarih.innerHTML = "Son Okuma Tarihi: " + returnData["tarih"];
+						clearInterval(sadeceRFIDInterval);
+						processMutex = 0;
+						sonDuzenle();
+					}
+					
 				}
 			}
 		});
+	}
+
+	function sonDuzenle()
+	{	
+		let secim =0;
+		if (agirlik < 30) {
+			kapiAc(7);
+			secim = 18;
+		}
+		else if (agirlik >= 30 && agirlik < 50) {
+			kapiAc(8);
+			secim = 19;
+		}
+		else
+		{
+			kapiAc(9);
+			secim = 20;
+		}
+		setTimeout(function () {
+			
+		}, 5000);
+		kapiAc(secim);
+
+	}
+
+	function duzenle(returnData)
+	{
+		var gelenSonuc = JSON.parse(returnData["message"]);
+		document.getElementById("rfidTxt").value = gelenSonuc.rfidKodu;
+		//document.getElementById("agirlikTxt").value = JSON.parse(returnData["message"]).agirlik;
+		document.getElementById("lblTur").value = gelenSonuc.kategori.ustkategori.id;
+		var item = document.getElementById("lblaltTur");
+		removeOptions(item);
+		$.ajax({
+			url: "/Hayvan/hayvanAltTurJson",
+			dataType: "json",
+			type: "POST",
+			data: {
+				"value": gelenSonuc.kategori.ustkategori.id
+			},
+			success: function (returnData) {
+				var gelen = JSON.parse(returnData);
+				for (let i = 0; i < gelen.length; i++) {
+					var opt = document.createElement("option");
+					opt.value = gelen[i].id;
+					opt.text = gelen[i].kategoriAdi; // whatever property it has
+					item.appendChild(opt);
+				}
+			}
+		});
+
+		document.getElementById("lblaltTur").value = gelenSonuc.kategoriId;
+		document.getElementById("txtHayvanAd").value = gelenSonuc.kupeIsmi;
+		switch (gelenSonuc.cinsiyet) {
+			case "Erkek":
+				document.getElementById("kt_modal_update_role_option_0").checked = true;
+				break;
+			case "Dişi":
+				document.getElementById("kt_modal_update_role_option_1").checked = true;
+				break;
+			case "Bilinmeyen":
+				document.getElementById("kt_modal_update_role_option_2").checked = true;
+				break;
+
+		}
+		document.getElementById("btnIdd").innerText = "Düzenle";
 	}
 
 	function Ara(aranan)
@@ -554,18 +638,21 @@
 	}
 
 	function agirlikGetir() {
-		girisKapisi = 0;
+		if(processMutex == 0 || agirlikMutex == 0)
+		{
+			clearInterval(mevcutInterval);
+			return;
+		}
+
 		var item = document.getElementById("agirlikTxt");
+		agirlikIstek();
+
 		if (guid == "")
 			return;
-		agirlikMutex = 0;
-		if(agirlikMutex == 0)
-		{
-			kapiAc(6);
-			girisKapisi = 1;
-			agirlikMutex = 1;
-		}
-		agirlikIstek();
+
+
+		
+			
 		$.ajax({
 			url: "/Hayvan/agirlikDondur",
 			type: "POST",
@@ -577,26 +664,30 @@
 
 				}
 				else {
-
-					item.value = returnData["status"];
-					if(item.value != "")
-					{
-						let deger = Parse.Int(item.value);
-						if(deger > 5)
-						{
-							alert("5'ten büyük değer yok");
-							if(girisKapisi == 1)
-							{
-								kapiAc(17);
-								girisKapisi = 0;
-							}
-							rfIdIstek();
+					let agirlikBirim = parseInt(returnData["status"]);
+				   	if(agirlikBirim > 0 && agirlikBirim < 5)
+					   {
+						item.value = "Yeterli Ağırlık Ölçülmedi. En az 5kg Bekleniyor";
+					   }
+					   else if(agirlikBirim >= 5)
+					   {
+						agirlikMutex = 0;
+						item.value = returnData["status"];
+						kapiAc(17);
+						agirlik = agirlikBirim;
+						sadeceRFIDInterval = setInterval(function () {
 							rfidGetir();
-						}
-					}
+						}, 1000);
+					   }
+					   else
+					   {
+						   item.value = "Hayvan Bekleniyor";
+					   }
 				}
 			}
 		});
+
+
 	}
 
 	function agirlikGir(id)
@@ -630,8 +721,6 @@
 		sonhayvanlar();
 		$("#kt_modal_users_search").modal('show');
 	}
-
-
 
 	function agirlikEkle(){
 
@@ -679,7 +768,6 @@
 			}
 		});
 	}
-
 	function turSecim() {
 		var e = document.getElementById("lblTur");
 		var item = document.getElementById("lblaltTur");
@@ -723,16 +811,14 @@
 				"requestId": guid
 			},
 			success: function (returnData) {
-				//if (returnData["status"] == "error") {
-				//	Swal.fire({
-				//		text: returnData["message"],
-				//		icon: "error",
-				//		buttonsStyling: false,
-				//		customClass: {
-				//			confirmButton: "btn btn-primary"
-				//		}
-				//	});
-				//}
+				if (returnData["status"] == "error") {
+					return "-1";
+				}
+				else
+				{
+					return returnData["status"];
+				}
+
 			}
 		});
 	}
@@ -740,14 +826,17 @@
 	function rfIdIstek() {
 		if (guid == "")
 			guid = uuidv4();
+
 		$.ajax({
 			url: "/Hayvan/rfidIstekJson",
 			dataType: "json",
 			type: "POST",
+			async: true,
 			data: {
 				"requestId": guid
 			},
 			success: function (returnData) {
+
 				if (returnData["status"] == "error")
 				{
 					//Swal.fire({
@@ -758,11 +847,9 @@
 					//		confirmButton: "btn btn-primary"
 					//	}
 					//});
-					return false;
 				}
 				else
 				{
-					return true;
 				}
 			}
 		});
