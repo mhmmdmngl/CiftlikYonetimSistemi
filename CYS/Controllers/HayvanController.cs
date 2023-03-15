@@ -155,7 +155,7 @@ namespace CYS.Controllers
 				}
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				HayvanCTX actx = new HayvanCTX();
-				var hayvanVarMi = actx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu", new { rfidKodu = rfid });
+				var hayvanVarMi = actx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = rfid });
 				if(hayvanVarMi != null)
 				{
 					hayvanVarMi.cinsiyet = cinsiyetS;
@@ -186,7 +186,7 @@ namespace CYS.Controllers
                     kategoriId = Convert.ToInt32(altTurId)
                 };
 				actx.hayvanEkle(hy);
-				var eklenenson = actx.hayvanTek("select * from Hayvan order by id desc limit 1", null);
+				var eklenenson = actx.hayvanTek("select * from hayvan order by id desc limit 1", null);
 				AgirlikHayvanCTX ahctx1 = new AgirlikHayvanCTX();
 				agirlikHayvan ah1 = new agirlikHayvan()
 				{
