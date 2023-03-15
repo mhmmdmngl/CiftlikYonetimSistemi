@@ -471,6 +471,13 @@
 		processMutex = 1;
 		agirlikMutex = 1;
 		document.getElementById("btnBasla").disabled = true;
+		kapiAc(17);
+		kapiAc(18);
+		kapiAc(19);
+		kapiAc(20);
+		setTimeout(function () {
+			
+		}, 2000);
 		kapiAc(6);
 		mevcutInterval = setInterval(function () {
 			//rfidGetir();
@@ -519,17 +526,7 @@
 			async: false,
 			data: { "requestId": guid },
 			success: function (returnData) {
-				if (returnData["status"] == "err"  {
-					Swal.fire({
-						text: returnData["message"],
-						icon: "error",
-						buttonsStyling: false,
-						confirmButtonText: "",
-						customClass: {
-							confirmButton: "btn btn-primary"
-						}
-					});
-				}
+				
 				if (returnData["status"] == "0" || returnData["status"] == "-1") {
 					
 				}
@@ -579,7 +576,7 @@
 		}
 		setTimeout(function () {
 			
-		}, 5000);
+		}, 3000);
 		kapiAc(secim);
 
 	}
