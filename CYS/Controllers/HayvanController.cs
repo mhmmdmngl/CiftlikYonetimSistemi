@@ -101,22 +101,33 @@ namespace CYS.Controllers
 			var profile = HttpContext.Session.GetString("profile");
 			if (user != null && profile != null)
 			{
-				var userObj = JsonConvert.DeserializeObject<User>(user);
-				kupeatamaCTX actx = new kupeatamaCTX();
-				var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
-				if (sonAgirlik != null)
+				try
 				{
-					HayvanCTX hctx = new HayvanCTX();
-					var hayvanVarmi = hctx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = sonAgirlik.kupeRfid });
-					if(hayvanVarmi != null)
+					var userObj = JsonConvert.DeserializeObject<User>(user);
+					kupeatamaCTX actx = new kupeatamaCTX();
+					var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
+					if (sonAgirlik != null)
 					{
-						var mevcutHayvan = System.Text.Json.JsonSerializer.Serialize(hayvanVarmi);
-						return Json(new { status = "mevcut", message = mevcutHayvan });
+						HayvanCTX hctx = new HayvanCTX();
+						var hayvanVarmi = hctx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = sonAgirlik.kupeRfid });
+						if (hayvanVarmi != null)
+						{
+							var mevcutHayvan = System.Text.Json.JsonSerializer.Serialize(hayvanVarmi);
+							return Json(new { status = "mevcut", message = mevcutHayvan });
 
+						}
+						return Json(new { status = sonAgirlik.kupeRfid, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
 					}
-					return Json(new { status = sonAgirlik.kupeRfid, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
+					return Json(new { status = "0" });
+
+				}catch(Exception ex)
+
+				{
+					return Json(new { status = "err", message = ex.ToString() });
+
 				}
-				return Json(new {status = "0"});
+
+
 			}
 			return Json(new { status = "-1" });
 

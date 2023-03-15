@@ -519,9 +519,19 @@
 			async: false,
 			data: { "requestId": guid },
 			success: function (returnData) {
-
+				if (returnData["status"] == "err"  {
+					Swal.fire({
+						text: returnData["message"],
+						icon: "error",
+						buttonsStyling: false,
+						confirmButtonText: "",
+						customClass: {
+							confirmButton: "btn btn-primary"
+						}
+					});
+				}
 				if (returnData["status"] == "0" || returnData["status"] == "-1") {
-
+					
 				}
 				else if (returnData["status"] == "mevcut") {
 					if (olcumFlag == 0) {
