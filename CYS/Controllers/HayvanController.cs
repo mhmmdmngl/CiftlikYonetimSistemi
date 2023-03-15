@@ -82,7 +82,7 @@ namespace CYS.Controllers
 			var profile = HttpContext.Session.GetString("profile");
 			if(user != null && profile != null)
 			{
-				var userObj = JsonConvert.DeserializeObject<User>(user);
+			var userObj = JsonConvert.DeserializeObject<User>(user);
 				AgirlikOlcumCTX actx = new AgirlikOlcumCTX();
 				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikolcum where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
 				if(sonAgirlik != null)
@@ -101,22 +101,33 @@ namespace CYS.Controllers
 			var profile = HttpContext.Session.GetString("profile");
 			if (user != null && profile != null)
 			{
-				var userObj = JsonConvert.DeserializeObject<User>(user);
-				kupeatamaCTX actx = new kupeatamaCTX();
-				var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
-				if (sonAgirlik != null)
+				try
 				{
-					HayvanCTX hctx = new HayvanCTX();
-					var hayvanVarmi = hctx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = sonAgirlik.kupeRfid });
-					if(hayvanVarmi != null)
+					var userObj = JsonConvert.DeserializeObject<User>(user);
+					kupeatamaCTX actx = new kupeatamaCTX();
+					var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
+					if (sonAgirlik != null)
 					{
-						var mevcutHayvan = System.Text.Json.JsonSerializer.Serialize(hayvanVarmi);
-						return Json(new { status = "mevcut", message = mevcutHayvan });
+						HayvanCTX hctx = new HayvanCTX();
+						var hayvanVarmi = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = sonAgirlik.kupeRfid });
+						if (hayvanVarmi != null)
+						{
+							var mevcutHayvan = System.Text.Json.JsonSerializer.Serialize(hayvanVarmi);
+							return Json(new { status = "mevcut", message = mevcutHayvan });
 
+						}
+						return Json(new { status = sonAgirlik.kupeRfid, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
 					}
-					return Json(new { status = sonAgirlik.kupeRfid, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
+					return Json(new { status = "0" });
+
+				}catch(Exception ex)
+
+				{
+					return Json(new { status = "err", message = ex.ToString() });
+
 				}
-				return Json(new {status = "0"});
+
+
 			}
 			return Json(new { status = "-1" });
 
@@ -144,7 +155,7 @@ namespace CYS.Controllers
 				}
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				HayvanCTX actx = new HayvanCTX();
-				var hayvanVarMi = actx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu", new { rfidKodu = rfid });
+				var hayvanVarMi = actx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = rfid });
 				if(hayvanVarMi != null)
 				{
 					hayvanVarMi.cinsiyet = cinsiyetS;
@@ -175,7 +186,7 @@ namespace CYS.Controllers
                     kategoriId = Convert.ToInt32(altTurId)
                 };
 				actx.hayvanEkle(hy);
-				var eklenenson = actx.hayvanTek("select * from Hayvan order by id desc limit 1", null);
+				var eklenenson = actx.hayvanTek("select * from hayvan order by id desc limit 1", null);
 				AgirlikHayvanCTX ahctx1 = new AgirlikHayvanCTX();
 				agirlikHayvan ah1 = new agirlikHayvan()
 				{
@@ -425,6 +436,9 @@ namespace CYS.Controllers
 
 		public JsonResult agirlikIstekJson(string requestId)
 		{
+			if(requestId == null)
+				return Json(new { status = "error", message = "Request Id Null" });
+
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
 			if (user != null && profile != null)
@@ -463,6 +477,45 @@ namespace CYS.Controllers
 
 			
 		}
+
+		public JsonResult agirlikIsteksadece()
+		{
+			
+			var user = HttpContext.Session.GetString("user");
+			var profile = HttpContext.Session.GetString("profile");
+			if (user != null && profile != null)
+			{
+				try
+				{
+					var userObj = JsonConvert.DeserializeObject<User>(user);
+					var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+					var client = new RestClient(profileObj.cihazLink + "/AgirlikApi");
+					client.Timeout = -1;
+					var request = new RestRequest(Method.GET);
+					IRestResponse response = client.Execute(request);
+					var cevap = response.Content;
+					//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+					if (cevap == "")
+						return Json("4.5");
+
+
+
+					return Json(cevap);
+				}
+				catch
+				{
+					return Json("4.5");
+
+				}
+
+
+
+			}
+			return Json("");
+
+
+		}
+
 
 		public JsonResult hayvaninOzellikleriJson(int hayvanId)
 		{

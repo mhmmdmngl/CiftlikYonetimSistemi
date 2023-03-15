@@ -34,6 +34,8 @@ namespace CYS.Repos
 
 		public int agirlikOlcumEkle(AgirlikOlcum hayvan)
 		{
+
+
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
 				var item = connection.Execute("insert into agirlikolcum (userId,agirlikOlcumu, requestId) values (@userId,@agirlikOlcumu, @requestId)", hayvan);
