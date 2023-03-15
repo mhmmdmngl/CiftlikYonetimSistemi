@@ -109,7 +109,7 @@ namespace CYS.Controllers
 					if (sonAgirlik != null)
 					{
 						HayvanCTX hctx = new HayvanCTX();
-						var hayvanVarmi = hctx.hayvanTek("select * from fayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = sonAgirlik.kupeRfid });
+						var hayvanVarmi = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = sonAgirlik.kupeRfid });
 						if (hayvanVarmi != null)
 						{
 							var mevcutHayvan = System.Text.Json.JsonSerializer.Serialize(hayvanVarmi);
