@@ -455,6 +455,8 @@
 	var processBegin = -1;
 	var agirlikProcessBegin = 0;
 	let kapiFlag = 0;
+	let processFlag = 0;
+
 	let cikisKontrol = 0;
 
 	var idKapi1alt = parseFloat(document.getElementById("idKapi1Alt").value);
@@ -471,40 +473,78 @@
 		process();
 	}, 1000);
 
-	var agirlikOlcumInterval = setInterval(function () {
-		agirlikProcess();
-	}, 1000);
+	
 
-	clearInterval(agirlikOlcumInterval);
 
 	function basla()
 	{
 		processBegin = 1;
 	}
 
-	function process()
-	{
-		if(processBegin == 1)
-		{
-			if(kapiFlag == 0)
-			{
-				tumKapilariKapat();
-				kapiFlag = 1;
-				var sonucBekle = kapiAc(6);
-				agirlikBegin = 1;
-			}
+	//function process()
+	//{
+	//	if(processBegin == 1)
+	//	{
+	//		if(kapiFlag == 0)
+	//		{
+	//			tumKapilariKapat();
+	//			kapiFlag = 1;
+	//			var sonucBekle = kapiAc(6);
+	//			agirlikBegin = 1;
+	//		}
 
 			
 
-			agirlikGetir();
-			agirlikIstek();
+	//		agirlikGetir();
+	//		agirlikIstek();
 
-		}
-		else if(processBegin == 0)
+	//	}
+	//	else if(processBegin == 0)
+	//	{
+	//		alert("processSonuclandi")
+	//	}
+
+	//}
+
+	function process() {
+		if(processBegin == 1)
 		{
-			alert("processSonuclandi")
-		}
+			if (guid == "")
+				guid = uuidv4();
+			var agirlikOlcumInterval = setInterval(function () {
+				agirlikGetirTemiz();
+			}, 500);
 
+			var rfidInterval = setInterval(function () {
+				rfidGetirTemiz();
+			}, 500);
+
+			if (processFlag == 0) {
+				$.ajax({
+					url: "/Hayvan/otomatiksurec",
+					dataType: "json",
+					type: "POST",
+					data: {
+						"requestId": guid
+					},
+					success: function (returnData) {
+						if (returnData["status"] == "success") {
+							Swal.fire({
+								text: returnData["message"],
+								icon: "success",
+								buttonsStyling: false,
+								customClass: {
+									confirmButton: "btn btn-primary"
+								}
+							});
+						}
+
+					}
+				});
+				processFlag = 1;
+			}
+		}
+		
 	}
 
 	function agirlikProcess() {

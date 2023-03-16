@@ -245,7 +245,6 @@ namespace CYS.Controllers
 
 		}
 
-
 		public JsonResult HayvanDuzenleJson(string hayvanId, string rfid, string hayvanAdi, string agirlik, int cinsiyet)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -717,6 +716,216 @@ namespace CYS.Controllers
 
 			}
 			return Json("");
+		}
+
+		public JsonResult otomatiksurec(string requestId)
+		{
+			if (requestId == null)
+				return Json(new { status = "error", message = "Request Id Null" });
+
+			var user = HttpContext.Session.GetString("user");
+			var profile = HttpContext.Session.GetString("profile");
+			if (user != null && profile != null)
+			{
+				var userObj = JsonConvert.DeserializeObject<User>(user);
+				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+
+				//tumKapilariKapa();
+
+				//Giriş Kapısını Açıyoruz
+				var cevap = webServisSorgu("/Secim?secenek=6");
+
+				// 5 kg ve fazlası gelinceye kadar bekliyoruz....
+				double olculenDeger = 0.00;
+				while(olculenDeger < 20)
+				{
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					Task.Delay(750).Wait();
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					Task.Delay(750).Wait();
+				}
+
+				//Giriş Kapısı Kapanıyor...
+				cevap = webServisSorgu("/Secim?secenek=17");
+
+				string rfid = "";
+				while(rfid.Length < 3)
+				{
+					rfid = rfidOlcumOtomatik(requestId, userObj.id);
+				}
+				//rfid verisi geldi demek
+
+				//Yönlenirme kapısı açılıyor...
+				int kapanan = 18;
+				if(olculenDeger >5 && olculenDeger < 20)
+					cevap = webServisSorgu("/Secim?secenek=7");
+				else if (olculenDeger > 19 && olculenDeger < 40)
+				{
+					cevap = webServisSorgu("/Secim?secenek=8");
+					kapanan = 19;
+				}
+				else if (olculenDeger > 39 && olculenDeger < 1000)
+				{
+					cevap = webServisSorgu("/Secim?secenek=9");
+					kapanan = 20;
+
+				}
+
+				//Hayvanın çıktığından emin olmak için  bekliyoruz.
+				while (olculenDeger > 5)
+				{
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					Task.Delay(750).Wait();
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					Task.Delay(750).Wait();
+				}
+
+				cevap = webServisSorgu("/Secim?secenek="+kapanan);
+
+				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
+
+			}
+
+			return Json(new { status = "error", message = "" });
+
+
+
+		}
+
+		public string rfidOlcumOtomatik(string requestId, int userId)
+		{
+			kupeatamaCTX hctx = new kupeatamaCTX();
+			KupeAtama eklenenId = null;
+			try
+			{
+				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId order by desc limit 1", new { requestId = requestId });
+			}
+			catch (Exception ex)
+			{
+				return "";
+
+			}
+			if (eklenenId == null)
+			{
+				KupeAtama kupe = new KupeAtama()
+				{
+					requestId = requestId,
+					userId = userId,
+					kupeRfid = ""
+				};
+				try
+				{
+					hctx.kupeAtamaEkle(kupe);
+
+				}
+				catch (Exception ex)
+				{
+					return "";
+
+				}
+				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId order by desc limit 1", new { requestId = requestId });
+			}
+
+			if (eklenenId == null)
+			{
+				return "";
+
+			}
+
+			var gelen = webServisSorgu("/RFIDApi");
+			return gelen;
+		}
+
+		public double agirlikOlcumOtomatik(string requestId, int userId)
+		{
+			AgirlikOlcum eklenenId = null;
+			AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
+			try
+			{
+				//bu request id ile eklenmiş veri var mı kontrolü
+				eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
+
+			}
+			catch (Exception ex)
+			{
+				return -0.00;
+			}
+
+			if (eklenenId == null)
+			{
+				AgirlikOlcum agirlik = new AgirlikOlcum()
+				{
+					requestId = requestId,
+					userId = userId,
+					agirlikOlcumu = ""
+				};
+				try
+				{
+					hctx.agirlikOlcumEkle(agirlik);
+
+				}
+				catch (Exception ex)
+				{
+
+				}
+				//Veri eklendikten sonra eklenen veri tekrar elde ediliyor
+				eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId order by id desc limit 1", new { requestId = requestId });
+			}
+			double olcum;
+
+			var gelenCevap = webServisSorgu("/AgirlikApi");
+			if(gelenCevap != "-1")
+			{
+				if(Double.TryParse(gelenCevap, out olcum))
+				{
+					eklenenId.agirlikOlcumu = olcum.ToString();
+					hctx.agirlikOlcumGuncelle(eklenenId);
+					return olcum;
+				}
+			}
+			return -0.00;
+
+
+		}
+
+		public void tumKapilariKapa()
+		{
+			var cevap = webServisSorgu("/Secim?secenek=17");
+			Task.Delay(1000).Wait();
+			cevap = webServisSorgu("/Secim?secenek=18");
+			Task.Delay(1000).Wait();
+			cevap = webServisSorgu("/Secim?secenek=19");
+			Thread.Sleep(1000);
+			cevap = webServisSorgu("/Secim?secenek=20");
+			Thread.Sleep(1000);
+		}
+
+		public string webServisSorgu(string fonksiyon)
+		{
+			var user = HttpContext.Session.GetString("user");
+			var profile = HttpContext.Session.GetString("profile");
+			if (user != null && profile != null)
+			{
+				try
+				{
+					var userObj = JsonConvert.DeserializeObject<User>(user);
+					var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+					var client = new RestClient(profileObj.cihazLink + fonksiyon);
+					client.Timeout = -1;
+					var request = new RestRequest(Method.GET);
+					IRestResponse response = client.Execute(request);
+					var cevap = response.Content;
+					//var gelen = JsonConvert.DeserializeObject<string>(cevap);
+					return cevap;
+				}
+				catch
+				{
+					return "-1";
+				}
+				
+			}
+			return "-1";
+				
 		}
 	}
 }
