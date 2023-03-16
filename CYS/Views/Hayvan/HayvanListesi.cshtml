@@ -500,7 +500,7 @@
 			agirlikIstek();
 
 		}
-		else if(processBegin = 0)
+		else if(processBegin == 0)
 		{
 			alert("processSonuclandi")
 		}
@@ -570,7 +570,6 @@
 								var sonuc2 =kapiAc(9);
 							cikisKontrol = 1;
 							rfidFlag = 1;
-							alert("Çıkış Kapısı Açıldı");
 						}
 					}
 					
@@ -602,7 +601,6 @@
 						if (cikisKontrol == 1 && olcum < 5) {
 							tumKapilariKapat();
 							processBegin = 0;
-							alert("bura bitti");
 							return;
 						}
 						agirlikList.push(olcum);
