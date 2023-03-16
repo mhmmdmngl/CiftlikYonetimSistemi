@@ -505,7 +505,6 @@
 	//	}
 
 	//}
-
 	function process() {
 		if(processBegin == 1)
 		{
@@ -513,11 +512,11 @@
 				guid = uuidv4();
 			var agirlikOlcumInterval = setInterval(function () {
 				agirlikGetirTemiz();
-			}, 500);
+			}, 750);
 
 			var rfidInterval = setInterval(function () {
 				rfidGetirTemiz();
-			}, 500);
+			}, 1200);
 
 			if (processFlag == 0) {
 				$.ajax({
@@ -954,31 +953,36 @@ function rfidGetirTemiz() {
 		
 		if (guid == "")
 			return;
-		$.ajax({
-			url: "/Hayvan/rfidDondur",
-			type: "POST",
-			async: true,
-			data: { "requestId": guid },
-			success: function (returnData) {
-				
-				if (returnData["status"] == "0" || returnData["status"] == "-1") {
-					
-				}
-				else if (returnData["status"] == "mevcut") {
-					duzenle(returnData);
-					
-				}
-				else {
-					if(returnData["status"] != "")
-					{
-						document.getElementById("btnIdd").innerText = "Ekle";
-						document.getElementById("rfidTxt").value = returnData["status"];
-						tarih.innerHTML = "Son Okuma Tarihi: " + returnData["tarih"];
+		if(rfidFlag == 0)
+		{
+			$.ajax({
+				url: "/Hayvan/rfidDondur",
+				type: "POST",
+				async: true,
+				data: { "requestId": guid },
+				success: function (returnData) {
+
+					if (returnData["status"] == "0" || returnData["status"] == "-1") {
+
 					}
-					
+					else if (returnData["status"] == "mevcut") {
+						rfidFlag = 1;
+						duzenle(returnData);
+
+					}
+					else {
+						if (returnData["status"] != "") {
+							rfidFlag = 1;
+							document.getElementById("btnIdd").innerText = "Ekle";
+							document.getElementById("rfidTxt").value = returnData["status"];
+							tarih.innerHTML = "Son Okuma Tarihi: " + returnData["tarih"];
+						}
+
+					}
 				}
-			}
-		});
+			});
+
+		}
 	}
 
 function agirlikGetirTemiz() {
