@@ -597,7 +597,6 @@ namespace CYS.Controllers
 
 		}
 
-
 		public JsonResult hayvaninOzellikleriJson(int hayvanId)
 		{
 			HayvanKriterUnsurCTX hkctx = new HayvanKriterUnsurCTX();
@@ -686,7 +685,6 @@ namespace CYS.Controllers
 			var sey = Json(userObj);
 			return sey;
 		}
-
 
 		public JsonResult kapiTetikle(int kapiId)
 		{
