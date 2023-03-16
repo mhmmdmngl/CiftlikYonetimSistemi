@@ -84,7 +84,7 @@ namespace CYS.Controllers
 			{
 			var userObj = JsonConvert.DeserializeObject<User>(user);
 				AgirlikOlcumCTX actx = new AgirlikOlcumCTX();
-				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikolcum where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
+				var sonAgirlik = actx.agirlikOlcumTek("select * from agirlikolcum where userId = @userId and requestId = @requestId ", new { userId = userObj.id, requestId = requestId });
 				if(sonAgirlik != null)
 				{
 					return Json(new { status = sonAgirlik.agirlikOlcumu, tarih = sonAgirlik.tarih.ToString("dd.MM.yyyy hh:mm:s") });
