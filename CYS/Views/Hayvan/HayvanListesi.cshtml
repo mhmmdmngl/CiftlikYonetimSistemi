@@ -538,6 +538,7 @@
 				}
 				else if (returnData["status"] == "mevcut") {
 					duzenle(returnData);
+					rfidFlag = 1;
 					if (olcumSon > 5) {
 
 						if (olcumSon < idKapi1Ust)
@@ -566,6 +567,7 @@
 							else
 								var sonuc2 =kapiAc(9);
 							cikisKontrol = 1;
+							rfidFlag = 1;
 							alert("Çıkış Kapısı Açıldı");
 						}
 					}
@@ -612,9 +614,12 @@
 								var GirisKapiKapat = kapiAc(17);
 								kapiFlag = 0;
 							}
-
-							rfIdIstek();
-							rfidGetir();
+							if(rfidFlag == 0)
+							{
+								rfIdIstek();
+								rfidGetir();
+							}
+							
 						}
 					}
 					
