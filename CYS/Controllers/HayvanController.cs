@@ -105,7 +105,7 @@ namespace CYS.Controllers
 				{
 					var userObj = JsonConvert.DeserializeObject<User>(user);
 					kupeatamaCTX actx = new kupeatamaCTX();
-					var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id desc limit 1", new { userId = userObj.id, requestId = requestId });
+					var sonAgirlik = actx.kupeAtamaTek("select * from kupeatama where userId = @userId and requestId = @requestId order by id asc limit 1", new { userId = userObj.id, requestId = requestId });
 					if (sonAgirlik != null)
 					{
 						HayvanCTX hctx = new HayvanCTX();
@@ -421,11 +421,13 @@ namespace CYS.Controllers
 				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
 				kupeatamaCTX hctx = new kupeatamaCTX();
 				KupeAtama eklenenId = null;
+
 				try
 				{
 					eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
 				}catch(Exception ex)
 				{
+
 					return Json(new { status = "error", message = ex.ToString() });
 
 				}
@@ -463,7 +465,10 @@ namespace CYS.Controllers
 					var cevap = response.Content;
 					//var gelen = JsonConvert.DeserializeObject<string>(cevap);
 					if (cevap == "")
+					{
 						return Json(new { status = "error", message = "Boş Veri Geldi..." });
+
+					}
 
 
 					eklenenId.kupeRfid = cevap;
@@ -496,6 +501,7 @@ namespace CYS.Controllers
 
 				AgirlikOlcum eklenenId = null;
 				AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
+
 				try
 				{
 					//bu request id ile eklenmiş veri var mı kontrolü
@@ -503,6 +509,7 @@ namespace CYS.Controllers
 				}
 				catch(Exception ex) 
 				{
+
 					return Json(new { status = "error", message = ex.ToString() }) ;
 
 				}
@@ -524,7 +531,6 @@ namespace CYS.Controllers
 					}catch(Exception ex)
 					{
 						return Json(new { status = "error", message = ex.ToString() });
-
 					}
 					//Veri eklendikten sonra eklenen veri tekrar elde ediliyor
 					eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId order by id desc limit 1", new { requestId = requestId });
@@ -576,20 +582,16 @@ namespace CYS.Controllers
 					var cevap = response.Content;
 					//var gelen = JsonConvert.DeserializeObject<string>(cevap);
 					if (cevap == "")
-						return Json("4.5");
+					{
+						return Json("0.0");
 
-
-
+					}
 					return Json(cevap);
 				}
 				catch
 				{
-					return Json("4.5");
-
+					return Json("0.0");
 				}
-
-
-
 			}
 			return Json("");
 
@@ -703,8 +705,9 @@ namespace CYS.Controllers
 					var cevap = response.Content;
 					//var gelen = JsonConvert.DeserializeObject<string>(cevap);
 					if (cevap == "")
+					{
 						return Json(new { status = "warning", message = "Boş Cevap" });
-
+					}
 
 					return Json(new { status = "success", message = "" });
 				}
@@ -723,6 +726,9 @@ namespace CYS.Controllers
 			if (requestId == null)
 				return Json(new { status = "error", message = "Request Id Null" });
 
+			int agirlikOlcumCounter = 0;
+			int rfidOlcumCounter = 0;
+
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
 			if (user != null && profile != null)
@@ -731,7 +737,6 @@ namespace CYS.Controllers
 				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
 
 				//tumKapilariKapa();
-
 				//Giriş Kapısını Açıyoruz
 				var cevap = webServisSorgu("/Secim?secenek=6");
 
@@ -739,22 +744,33 @@ namespace CYS.Controllers
 				double olculenDeger = 0.00;
 				while(olculenDeger < 20)
 				{
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(750).Wait();
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(750).Wait();
-				}
+					if(agirlikOlcumCounter > 10)
+					{
+						return Json(new { status = "error", message = "Ağırlık gelmedi" });
+					}
 
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					Task.Delay(750).Wait();
+					agirlikOlcumCounter++;
+				}
+				agirlikOlcumCounter = 0;
 				//Giriş Kapısı Kapanıyor...
 				cevap = webServisSorgu("/Secim?secenek=17");
 
 				string rfid = "";
 				while(rfid.Length < 3)
 				{
+					if(rfidOlcumCounter > 10)
+					{
+						return Json(new { status = "error", message = "RFID gelmedi" });
+					}
+
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
+					Task.Delay(750).Wait();
+					rfidOlcumCounter++;
 				}
 				//rfid verisi geldi demek
-
+				rfidOlcumCounter = 0;
 				//Yönlenirme kapısı açılıyor...
 				int kapanan = 18;
 				if(olculenDeger >5 && olculenDeger < 20)
@@ -774,14 +790,17 @@ namespace CYS.Controllers
 				//Hayvanın çıktığından emin olmak için  bekliyoruz.
 				while (olculenDeger > 5)
 				{
+					if (agirlikOlcumCounter > 10)
+					{
+						return Json(new { status = "error", message = "Ağırlık gelmedi" });
+					}
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
 					Task.Delay(750).Wait();
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(750).Wait();
+					agirlikOlcumCounter++;
+					
 				}
 
 				cevap = webServisSorgu("/Secim?secenek="+kapanan);
-
 				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
 
 			}
@@ -911,7 +930,7 @@ namespace CYS.Controllers
 					var userObj = JsonConvert.DeserializeObject<User>(user);
 					var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
 					var client = new RestClient(profileObj.cihazLink + fonksiyon);
-					client.Timeout = -1;
+					client.Timeout = 1000;
 					var request = new RestRequest(Method.GET);
 					IRestResponse response = client.Execute(request);
 					var cevap = response.Content;

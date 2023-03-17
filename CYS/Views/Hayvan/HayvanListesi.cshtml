@@ -512,11 +512,11 @@
 				guid = uuidv4();
 			var agirlikOlcumInterval = setInterval(function () {
 				agirlikGetirTemiz();
-			}, 750);
+			}, 500);
 
 			var rfidInterval = setInterval(function () {
 				rfidGetirTemiz();
-			}, 1200);
+			}, 1000);
 
 			if (processFlag == 0) {
 				$.ajax({
@@ -537,12 +537,37 @@
 								}
 							});
 						}
+						else
+						{
+							Swal.fire({
+								text: returnData["message"],
+								icon: "error",
+								buttonsStyling: false,
+								customClass: {
+									confirmButton: "btn btn-primary"
+								}
+							});
+							window.setTimeout(function () {
+						window.location.href = "../../Hayvan/HayvanListesi";
+					}, 1500);
 
+						}
+						processFlag = 1;
+
+					},
+					timeout: 20000,
+					error: function(){
+						alert("zaman aşımı sayfa yenilenecek");
+						window.setTimeout(function () {
+						window.location.href = "../../Hayvan/HayvanListesi";
+					}, 500);
 					}
 				});
 				processFlag = 1;
 			}
 		}
+
+		
 		
 	}
 
