@@ -720,7 +720,7 @@
 			url: "/Hayvan/rfidIstekJson",
 			dataType: "json",
 			type: "POST",
-			async: true,
+			async: false,
 			data: {
 				"requestId": guid
 			},
@@ -1056,12 +1056,6 @@ function agirlikSurecManuel()
 function rfidSurecManuel() {
 		rfIdIstek();
 		rfidGetirTemiz();
-		setTimeout(function () {
-			//do what you need here
-		}, 1000);
-		rfIdIstek();
-		rfidGetirTemiz();
-
 	}
 </script>
 
