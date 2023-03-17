@@ -826,7 +826,7 @@ namespace CYS.Controllers
 			}
 			if (eklenenId == null)
 			{
-				KupeAtama kupe = new KupeAtama()
+				eklenenId = new KupeAtama()
 				{
 					requestId = requestId,
 					userId = userId,
@@ -834,7 +834,7 @@ namespace CYS.Controllers
 				};
 				try
 				{
-					hctx.kupeAtamaEkle(kupe);
+					hctx.kupeAtamaEkle(eklenenId);
 
 				}
 				catch (Exception ex)
@@ -842,7 +842,7 @@ namespace CYS.Controllers
 					return "";
 
 				}
-				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId order by desc limit 1", new { requestId = requestId });
+				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId order by asc limit 1", new { requestId = requestId });
 			}
 
 			if (eklenenId == null)
@@ -852,6 +852,8 @@ namespace CYS.Controllers
 			}
 
 			var gelen = webServisSorgu("/RFIDApi");
+			eklenenId.kupeRfid = gelen;
+			hctx.kupeAtamaGuncelle(eklenenId);
 			return gelen;
 		}
 
