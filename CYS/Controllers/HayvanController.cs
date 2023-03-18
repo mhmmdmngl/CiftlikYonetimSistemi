@@ -762,7 +762,7 @@ namespace CYS.Controllers
 				cevap = webServisSorgu("/Secim?secenek=17");
 
 				string rfid = "";
-				while(rfid.Length < 3)
+				while(rfid.Length < 3 || rfid == "")
 				{
 					//if(rfidOlcumCounter > 10)
 					//{
@@ -770,7 +770,6 @@ namespace CYS.Controllers
 					//}
 
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(750).Wait();
 					rfidOlcumCounter++;
 				}
 				//rfid verisi geldi demek
