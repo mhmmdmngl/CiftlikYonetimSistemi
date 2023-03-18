@@ -744,10 +744,10 @@ namespace CYS.Controllers
 				double olculenDeger = 0.00;
 				while(olculenDeger < 20)
 				{
-					if(agirlikOlcumCounter > 10)
-					{
-						return Json(new { status = "error", message = "Ağırlık gelmedi" });
-					}
+					//if(agirlikOlcumCounter > 10)
+					//{
+					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
+					//}
 
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
 					Task.Delay(750).Wait();
@@ -764,10 +764,10 @@ namespace CYS.Controllers
 				string rfid = "";
 				while(rfid.Length < 3)
 				{
-					if(rfidOlcumCounter > 10)
-					{
-						return Json(new { status = "error", message = "RFID gelmedi" });
-					}
+					//if(rfidOlcumCounter > 10)
+					//{
+					//	return Json(new { status = "error", message = "RFID gelmedi" });
+					//}
 
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
 					Task.Delay(750).Wait();
@@ -794,10 +794,10 @@ namespace CYS.Controllers
 				//Hayvanın çıktığından emin olmak için  bekliyoruz.
 				while (olculenDeger > 5)
 				{
-					if (agirlikOlcumCounter > 10)
-					{
-						return Json(new { status = "error", message = "Ağırlık gelmedi" });
-					}
+					//if (agirlikOlcumCounter > 10)
+					//{
+					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
+					//}
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
 					Task.Delay(750).Wait();
 					agirlikOlcumCounter++;
