@@ -753,6 +753,10 @@ namespace CYS.Controllers
 					Task.Delay(750).Wait();
 					agirlikOlcumCounter++;
 				}
+				Task.Delay(500).Wait();
+				//Nihai Ağırlık Ölçümü
+				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+
 				agirlikOlcumCounter = 0;
 				//Giriş Kapısı Kapanıyor...
 				cevap = webServisSorgu("/Secim?secenek=17");
