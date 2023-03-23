@@ -25,7 +25,7 @@ namespace CYS.Controllers.WebApis
 
 		// POST api/<RFIDApiController>
 		[HttpPost]
-		public void Post(float agirlik)
+		public void Post(float agirlik, int processId)
 		{
 			AgirlikOlcumCTX agirlikCTX = new AgirlikOlcumCTX();
 			AgirlikOlcum kam = new AgirlikOlcum()
@@ -50,3 +50,4 @@ namespace CYS.Controllers.WebApis
 		}
 	}
 }
+0

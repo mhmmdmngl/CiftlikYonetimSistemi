@@ -14,7 +14,7 @@ namespace CYS.Repos
 				surecCTX uctx = new surecCTX();
 				foreach (var item in list)
 				{
-					item.process = uctx.surecTek("select * from surec where id = @id", new { id = item.processId });
+					item.process = uctx.surecTek("select * from surec where id = @id", new { id = item.surecId });
 				}
 				return list;
 			}
@@ -28,7 +28,7 @@ namespace CYS.Repos
 				var item = connection.Query<sureclog>(sorgu, param).FirstOrDefault();
 				surecCTX uctx = new surecCTX();
 				if (item != null)
-					item.process = uctx.surecTek("select * from surec where id = @id", new { id = item.processId });
+					item.process = uctx.surecTek("select * from surec where id = @id", new { id = item.surecId });
 
 				return item;
 			}

@@ -31,12 +31,10 @@ namespace CYS.Controllers
 			ViewBag.kriterler = kriterListe();
 			return View(hayvanListesi);
 		}
-
 		public IActionResult HayvanEkle()
 		{
 			return View();
 		}
-
 		public IActionResult HayvanSil(int hayvanId)
 		{
 			HayvanCTX hctx = new HayvanCTX();
@@ -48,7 +46,6 @@ namespace CYS.Controllers
 			}
 			return RedirectToAction("HayvanListesi");
 		}
-
 		public IActionResult HayvanDuzenle(int hayvanId)
 		{
 			ViewBag.HayvanId = hayvanId;
@@ -56,8 +53,6 @@ namespace CYS.Controllers
 			var hayvan = hctx.hayvanTek("select * from hayvan where id = @id", new { id = hayvanId });
 			return View(hayvan);
 		}
-
-
 		bool sessionKontrol()
 		{
 			try
@@ -75,7 +70,6 @@ namespace CYS.Controllers
 				return false;
 			}
 		}
-
 		public JsonResult agirlikDondur(string requestId)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -94,7 +88,6 @@ namespace CYS.Controllers
 			return Json(new { status = "-1" });
 
 		}
-
 		public JsonResult rfidDondur(string requestId)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -133,7 +126,6 @@ namespace CYS.Controllers
 
 
 		}
-
 		public JsonResult hayvanEkleJson(string rfid, string hayvanAdi, int cinsiyet, int altTurId, string agirlik)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -200,7 +192,6 @@ namespace CYS.Controllers
 			}
 			return Json(new { status = "Error", message = "Bir Hata Oluştu" });
 		}
-
 		public JsonResult HayvanAgirlikGuncelleJson(string id, string agirlik)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -222,7 +213,6 @@ namespace CYS.Controllers
 			return Json(new { status = "Error", message = "Bir Hata Oluştu" });
 
 		}
-
 		public JsonResult HayvanAgirlikGuncelleJsonEnBuyuk(string requestId, string agirlik)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -244,7 +234,6 @@ namespace CYS.Controllers
 			return Json(new { status = "Error", message = "Bir Hata Oluştu" });
 
 		}
-
 		public JsonResult HayvanDuzenleJson(string hayvanId, string rfid, string hayvanAdi, string agirlik, int cinsiyet)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -281,13 +270,11 @@ namespace CYS.Controllers
 			return Json(new { status = "Error", message = "Bir Hata Oluştu" });
 
 		}
-
 		public class hayvanTuru
 		{
 			public int Id;
 			public string Text;
 		}
-
 		public List<SelectListItem> hayvanTurListe()
 		{
             List<hayvanTuru> ustKategoriList = new List<hayvanTuru>();
@@ -303,7 +290,6 @@ namespace CYS.Controllers
 
             return itList;
         }
-
 		public List<SelectListItem> kriterListe()
 		{
 			KriterCTX kritCTX = new KriterCTX();
@@ -320,7 +306,6 @@ namespace CYS.Controllers
 
 			return itList;
 		}
-
 		public JsonResult HayvanListesiJson(string q)
 		{
             List<hayvanTuru> ustKategoriList = new List<hayvanTuru>();
@@ -339,7 +324,6 @@ namespace CYS.Controllers
 			}
 			return Json(new { items = ustKategoriList });
         }
-
         public JsonResult hayvanAltTurJson(string value)
         {
             KategoriCTX hctx = new KategoriCTX();
@@ -347,7 +331,6 @@ namespace CYS.Controllers
             var eleman = System.Text.Json.JsonSerializer.Serialize(ustKategoriList);
             return Json(eleman);
         }
-
 		public JsonResult hayvanOzellikGetirJson(string value)
 		{
 			KriterUnsurCTX hctx = new KriterUnsurCTX();
@@ -355,7 +338,6 @@ namespace CYS.Controllers
 			var eleman = System.Text.Json.JsonSerializer.Serialize(ozellikList);
 			return Json(eleman);
 		}
-
 		public JsonResult hayvaninOzellikleri(int hayvanId)
 		{
 			KriterUnsurCTX hctx = new KriterUnsurCTX();
@@ -363,7 +345,6 @@ namespace CYS.Controllers
 			var eleman = System.Text.Json.JsonSerializer.Serialize(ozellikList);
 			return Json(eleman);
 		}
-
 		public JsonResult HayvanOzellikEkleJson( int kriterId, int unsurId, int hayvanId)
 		{
 			HayvanKriterUnsurCTX hayvanKriterUnsurCTX = new HayvanKriterUnsurCTX();
@@ -393,7 +374,6 @@ namespace CYS.Controllers
 			return Json(new { status = "Success", message = "Özellik Eklendi..." });
 
 		}
-
 		public JsonResult HayvanOzellikSilJson(int id)
 		{
 			HayvanKriterUnsurCTX hayvanKriterUnsurCTX = new HayvanKriterUnsurCTX();
@@ -410,7 +390,6 @@ namespace CYS.Controllers
 
 
 		}
-
 		public JsonResult rfidIstekJson(string requestId)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -486,7 +465,6 @@ namespace CYS.Controllers
 
 
 		}
-
 		public JsonResult agirlikIstekJson(string requestId)
 		{
 			if(requestId == null)
@@ -639,7 +617,6 @@ namespace CYS.Controllers
 			usctx.soyagaciEkle(us);
 			return Json("");
 		}
-
 		public class miniTur
 		{
 			public int id { get; set; }
@@ -686,7 +663,6 @@ namespace CYS.Controllers
 			var sey = Json(userObj);
 			return sey;
 		}
-
 		public JsonResult kapiTetikle(int kapiId)
 		{
 			var user = HttpContext.Session.GetString("user");
@@ -720,7 +696,6 @@ namespace CYS.Controllers
 			}
 			return Json("");
 		}
-
 		public JsonResult otomatiksurec(string requestId)
 		{
 			if (requestId == null)
@@ -813,7 +788,6 @@ namespace CYS.Controllers
 
 
 		}
-
 		public string rfidOlcumOtomatik(string requestId, int userId)
 		{
 			kupeatamaCTX hctx = new kupeatamaCTX();
@@ -859,7 +833,6 @@ namespace CYS.Controllers
 			hctx.kupeAtamaGuncelle(eklenenId);
 			return gelen;
 		}
-
 		public double agirlikOlcumOtomatik(string requestId, int userId)
 		{
 			AgirlikOlcum eklenenId = null;
@@ -911,7 +884,6 @@ namespace CYS.Controllers
 
 
 		}
-
 		public void tumKapilariKapa()
 		{
 			var cevap = webServisSorgu("/Secim?secenek=17");
@@ -923,7 +895,6 @@ namespace CYS.Controllers
 			cevap = webServisSorgu("/Secim?secenek=20");
 			Thread.Sleep(1000);
 		}
-
 		public string webServisSorgu(string fonksiyon)
 		{
 			var user = HttpContext.Session.GetString("user");

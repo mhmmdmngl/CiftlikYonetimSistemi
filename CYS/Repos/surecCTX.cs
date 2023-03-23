@@ -38,16 +38,16 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into surec (guidId, userId) values (@guidId, @userId)", kategori);
+				var item = connection.Execute("insert into surec (requestId, userId) values (@requestId, @userId)", kategori);
 				return item;
 			}
 		}
 
-		public int surecGuncelle(Kategori kategori)
+		public int surecGuncelle(surec surec)
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update surec set guidId = @guidId, userId = @userId, tamamlandi = @tamamlandi where id = @id", kategori);
+				var item = connection.Execute("update surec set requestId = @requestId, userId = @userId, tamamlandi = @tamamlandi, tamamlanmaTarihi = @tamamlanmaTarihi where id = @id", kategori);
 				return item;
 			}
 		}
