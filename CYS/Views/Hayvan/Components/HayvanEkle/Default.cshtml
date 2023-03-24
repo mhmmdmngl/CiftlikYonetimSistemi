@@ -37,6 +37,10 @@
 							<input class="form-control form-control-solid mb-3 mb-lg-0" type="text" name="guidName" id="guidId" value="" />
 							<!--end::Input-->
 						</div>
+						<div class="fv-row mb-4 row">
+							<input type="button" onclick="basla()" id="btnBasla" class="form-control  mb-3  btn btn-success" value="Otomatik Süreç" />
+							<!--end::Input-->
+						</div>
 						<!--begin::Input group-->
 						<div class="fv-row mb-4 row">
 							<div class="col-8">
@@ -50,14 +54,14 @@
 							<div class="col-4">
 								<label class="required fw-bold fs-6 mb-2">Ağırlık Ölç</label>
 
-								<input type="button" onclick="process()" id ="btnBasla" class="form-control  mb-3  btn btn-success" value="Başla" />
+								<input type="button" onclick="agirlikSurecManuel()" id="btnBasla" class="form-control  mb-3  btn btn-info" value="Ölçüm" />
 
 							</div>
 							<!--end::Input-->
 						</div>
 
 						<div class="fv-row mb-4 row">
-							<div class="col-12">
+							<div class="col-8">
 								<!--begin::Label-->
 								<label class="required fw-bold fs-6 mb-2">Eid</label>
 								<!--end::Label-->
@@ -65,27 +69,93 @@
 								<input type="text" name="user_name" id="rfidTxt" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="RFID Okutun" />
 								<label class="fw-bold fs-6 mb-2" id="tarihlbl"></label>
 							</div>
-							
+							<div class="col-4">
+								<label class="required fw-bold fs-6 mb-2">RFID Ölç</label>
+
+								<input type="button" onclick="rfidSurecManuel()" id="btnBasla" class="form-control  mb-3  btn btn-info" value="RFID Ölç" />
+
+							</div>
 							
 							<!--end::Input-->
 						</div>
 
 						<div class="fv-row mb-4 row">
-							<div class="col-3">
+							<div class="col-3" style="background-color:  #f0f0f5;">
+								<center><label class="required fw-bold fs-6 mb-2">Giriş Kapısı</label></center>
+
+								<div class="row" >
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(6);" class="form-control  mb-3  btn btn-success" value="" />
+									</div>
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(17);" class="form-control  mb-3  btn btn-danger" value="" />
+									</div>
+								</div>
 								
-								<input type="button" onclick="kapiAc(6);" class="form-control  mb-3  btn btn-success" value="Giriş Kapısı" />
+								
 							</div>
 							<div class="col-3">
+								<center><label class="required fw-bold fs-6 mb-2">Yön 1</label></center>
 
-								<input type="button" onclick="kapiAc(7);" class="form-control  mb-3  btn btn-info" value="Yön 1" />
+								<div class="row">
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(7);" class="form-control  mb-3  btn btn-success" value="" />
+									</div>
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(18);" class="form-control  mb-3  btn btn-danger" value="" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-6">
+										<input type="text" name="kapi1Alt" id="idKapi1Alt" class="form-control form-control-solid " value="10" />
+									</div>
+									<div class="col-6">
+										<input type="text" name="kapi1Ust" id="idKapi1Ust" class="form-control form-control-solid " value="20" />
+									</div>
+								</div>
+
+							</div>
+							<div class="col-3" style="background-color:  #f0f0f5;">
+								<center><label class="required fw-bold fs-6 mb-2">Yön 2</label></center>
+
+								<div class="row" >
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(8);" class="form-control  mb-3  btn btn-success" value="" />
+									</div>
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(19);" class="form-control  mb-3  btn btn-danger" value="" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-6">
+										<input type="text" name="kapi2Alt" id="idKapi2Alt" class="form-control form-control-solid" value="21"/>
+									</div>
+									<div class="col-6">
+										<input type="text" name="kapi2Ust" id="idKapi2Ust" class="form-control form-control-solid " value="50" />
+									</div>
+								</div>
+
 							</div>
 							<div class="col-3">
+								<center><label class="required fw-bold fs-6 mb-2">Yön 3</label></center>
 
-								<input type="button" onclick="kapiAc(8);" class="form-control  mb-3  btn btn-danger" value="Yön 2" />
-							</div>
-							<div class="col-3">
+								<div class="row">
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(9);" class="form-control  mb-3  btn btn-success" value="" />
+									</div>
+									<div class="col-6">
+										<input type="button" onclick="kapiAc(20);" class="form-control  mb-3  btn btn-danger" value="" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-6">
+										<input type="text" name="kapi3Alt" id="idKapi3Alt" class="form-control form-control-solid"value="51" />
+									</div>
+									<div class="col-6">
+										<input type="text" name="kapi3Ust" id="idKapi3Ust" class="form-control form-control-solid" value="1000" />
+									</div>
+								</div>
 
-								<input type="button" onclick="kapiAc(9);" class="form-control  mb-3  btn btn-warning" value="Yön 3" />
 							</div>
 							
 
@@ -95,7 +165,7 @@
 						<div class="fv-row mb-4 row">
 							<div class="col-12">
 
-								<input type="button" onclick="kapiAc(5);" class="form-control  mb-3  btn btn-primary" value="Kapı 5" />
+								<input type="button" onclick="tumKapilariKapat();" class="form-control  mb-3  btn btn-primary" value="Tüm Kapıları Kapat" />
 							</div>
 							
 
@@ -227,26 +297,18 @@
 			url: "/Hayvan/kapiTetikle",
 			dataType: "json",
 			type: "POST",
-			async: true,
-
+			async: false,
 			data: {
 				"kapiId": id
 			},
 			success: function (returnData) {
 
 				if (returnData["status"] == "error" || returnData["status"] == "-1") {
-					Swal.fire({
-						text: returnData["message"],
-						icon: "error",
-						buttonsStyling: false,
-						confirmButtonText: "Tekrar Açmayı Tene",
-						customClass: {
-							confirmButton: "btn btn-primary"
-						}
-					});
+					return false;
 					
 
 				}
+				return true;
 				
 			}
 		});
