@@ -793,7 +793,7 @@ namespace CYS.Controllers
 				return "";
 
 			}
-			if(eklenenId.kupeRfid != "")
+			if(eklenenId.kupeRfid == "")
 			{
 				var gelen = webServisSorgu("/RFIDApi");
 				eklenenId.kupeRfid = gelen;
