@@ -702,7 +702,7 @@ namespace CYS.Controllers
 				return Json(new { status = "error", message = "Request Id Null" });
 			int agirlikOlcumCounter = 0;
 			int rfidOlcumCounter = 0;
-
+			List<double> agirlikOlcumleri = new List<double>();
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
 			if (user != null && profile != null)
@@ -731,6 +731,15 @@ namespace CYS.Controllers
 				}
 				//Nihai Ağırlık Ölçümü
 				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+				while(agirlikOlcumCounter < 5)
+				{
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					if (olculenDeger > 6)
+						agirlikOlcumleri.Add(olculenDeger);
+					agirlikOlcumCounter++;
+				}
+				AgirlikOlcum eklenenId = agirlikOlcumKontrol(requestId, userObj.id);
+				
 
 				agirlikOlcumCounter = 0;
 				//Giriş Kapısı Kapanıyor...
@@ -985,6 +994,23 @@ namespace CYS.Controllers
 			}
 			return "-1";
 				
+		}
+
+		public static double GetMedian(double[] sourceNumbers)
+		{
+			//Framework 2.0 version of this method. there is an easier way in F4        
+			if (sourceNumbers == null || sourceNumbers.Length == 0)
+				throw new System.Exception("Median of empty array not defined.");
+
+			//make sure the list is sorted, but use a new array
+			double[] sortedPNumbers = (double[])sourceNumbers.Clone();
+			Array.Sort(sortedPNumbers);
+
+			//get the median
+			int size = sortedPNumbers.Length;
+			int mid = size / 2;
+			double median = (size % 2 != 0) ? (double)sortedPNumbers[mid] : ((double)sortedPNumbers[mid] + (double)sortedPNumbers[mid - 1]) / 2;
+			return median;
 		}
 	}
 }
