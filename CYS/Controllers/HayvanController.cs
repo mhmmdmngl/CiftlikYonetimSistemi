@@ -741,8 +741,7 @@ namespace CYS.Controllers
 				while(rfid == "")
 				{
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(500).Wait();
-					rfidOlcumCounter++;
+					Task.Delay(50).Wait();
 				}
 				//rfid verisi geldi demek
 				rfidOlcumCounter = 0;
@@ -795,6 +794,15 @@ namespace CYS.Controllers
 				var gelen = webServisSorgu("/RFIDApi");
 				eklenenId.kupeRfid = gelen;
 				hctx.kupeAtamaGuncelle(eklenenId);
+
+				sureclogCTX slctx = new sureclogCTX();
+				sureclog sl = new sureclog()
+				{
+					processId = 1,
+					sorguSonucu = "RFID Ölçümü",
+					sorguCevap = gelen,
+					fonksiyonAdi = "kupekontrol"
+				};
 				return gelen;
 
 			}
