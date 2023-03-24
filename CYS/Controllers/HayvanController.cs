@@ -788,11 +788,7 @@ namespace CYS.Controllers
 
 			kupeatamaCTX hctx = new kupeatamaCTX();
 			KupeAtama eklenenId = kupekontrol( requestId,  userId);
-			if (eklenenId == null)
-			{
-				return "";
-
-			}
+	
 			if(eklenenId.kupeRfid == "")
 			{
 				var gelen = webServisSorgu("/RFIDApi");
