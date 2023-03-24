@@ -793,11 +793,17 @@ namespace CYS.Controllers
 				return "";
 
 			}
+			if(eklenenId.kupeRfid != "")
+			{
+				var gelen = webServisSorgu("/RFIDApi");
+				eklenenId.kupeRfid = gelen;
+				hctx.kupeAtamaGuncelle(eklenenId);
+				return gelen;
 
-			var gelen = webServisSorgu("/RFIDApi");
-			eklenenId.kupeRfid = gelen;
-			hctx.kupeAtamaGuncelle(eklenenId);
-			return gelen;
+			}
+			return eklenenId.kupeRfid;
+
+
 		}
 
 		public KupeAtama kupekontrol(string requestId, int userId)
