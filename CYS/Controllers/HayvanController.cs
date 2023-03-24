@@ -774,7 +774,6 @@ namespace CYS.Controllers
 					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
 					//}
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(750).Wait();
 					agirlikOlcumCounter++;
 					
 				}
