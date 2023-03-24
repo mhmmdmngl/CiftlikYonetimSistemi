@@ -831,7 +831,7 @@ namespace CYS.Controllers
 					requestId = requestId,
 					userId = userId,
 					tarih = DateTime.Now,
-					kupeRfid = "FF"
+					kupeRfid = ""
 				};
 				try
 				{
