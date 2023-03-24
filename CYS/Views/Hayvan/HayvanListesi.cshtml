@@ -511,15 +511,16 @@
 		{
 			if (guid == "")
 				guid = uuidv4();
-			var agirlikOlcumInterval = setInterval(function () {
-				agirlikGetirTemiz();
-			}, 500);
-
-			var rfidInterval = setInterval(function () {
-				rfidGetirTemiz();
-			}, 1000);
+			
 
 			if (processFlag == 0) {
+					var agirlikOlcumInterval = setInterval(function () {
+					agirlikGetirTemiz();
+				}, 500);
+
+				var rfidInterval = setInterval(function () {
+					rfidGetirTemiz();
+				}, 1000);
 				$.ajax({
 					url: "/Hayvan/otomatiksurec",
 					dataType: "json",
@@ -555,12 +556,6 @@
 						}
 						processFlag = 1;
 
-					},
-					error: function(){
-						alert("zaman aşımı sayfa yenilenecek");
-						window.setTimeout(function () {
-						window.location.href = "../../Hayvan/HayvanListesi";
-					}, 500);
 					}
 				});
 				processFlag = 1;
@@ -973,17 +968,16 @@ function rfidGetirTemiz() {
 			$.ajax({
 				url: "/Hayvan/rfidDondur",
 				type: "POST",
-				async: true,
 				data: { "requestId": guid },
 				success: function (returnData) {
 
 					if (returnData["status"] == "0" || returnData["status"] == "-1") {
-
+						return;
 					}
 					else if (returnData["status"] == "mevcut") {
 						rfidFlag = 1;
 						duzenle(returnData);
-
+						return;
 					}
 					else {
 						if (returnData["status"] != "") {
@@ -991,11 +985,13 @@ function rfidGetirTemiz() {
 							document.getElementById("btnIdd").innerText = "Ekle";
 							document.getElementById("rfidTxt").value = returnData["status"];
 							tarih.innerHTML = "Son Okuma Tarihi: " + returnData["tarih"];
+							return;
 						}
 
 					}
 				}
 			});
+			return;
 
 		}
 	}
@@ -1004,24 +1000,24 @@ function agirlikGetirTemiz() {
 
 		if (guid == "")
 			return;
-				var item = document.getElementById("agirlikTxt");
+		var item = document.getElementById("agirlikTxt");
 
 		$.ajax({
 			url: "/Hayvan/agirlikDondur",
 			type: "POST",
-			async: true,
 			data: { "requestId": guid },
 			success: function (returnData) {
 				if (returnData["status"] == "0" || returnData["status"] == "-1") {
-
+					return;
 				}
 				else {
 					if(returnData["status"] != "NaN")
 					{
 						olcum = parseFloat(returnData["status"]);					
 						document.getElementById("agirlikTxt").value = olcum;
-						
+						return;
 					}
+					return;
 					
 				}
 			}

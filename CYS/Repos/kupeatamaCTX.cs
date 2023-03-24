@@ -38,7 +38,7 @@ namespace CYS.Repos
 			hayvan.tarih = DateTime.Now;
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into kupeatama ( userId, kupeRfid, tarih, requestId, surecId) values (@userId, @kupeRfid, @tarih, @requestId, @surecId)", hayvan);
+				var item = connection.Execute("insert into kupeatama ( userId, kupeRfid, tarih, requestId) values (@userId, @kupeRfid, @tarih, @requestId)", hayvan);
 				return item;
 			}
 		}

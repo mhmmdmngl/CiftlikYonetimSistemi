@@ -50,4 +50,3 @@ namespace CYS.Controllers.WebApis
 		}
 	}
 }
-0

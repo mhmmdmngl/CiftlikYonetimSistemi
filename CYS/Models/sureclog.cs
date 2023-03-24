@@ -3,7 +3,7 @@
 	public class sureclog
 	{
 		public int id { get; set; }
-		public int surecId { get; set; }
+		public int processId { get; set; }
 		public surec process { get; set; }
 		public string fonksiyonAdi { get; set; }
 		public string sorguSonucu { get; set; }

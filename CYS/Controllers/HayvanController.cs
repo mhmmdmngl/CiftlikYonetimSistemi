@@ -700,7 +700,6 @@ namespace CYS.Controllers
 		{
 			if (requestId == null)
 				return Json(new { status = "error", message = "Request Id Null" });
-
 			int agirlikOlcumCounter = 0;
 			int rfidOlcumCounter = 0;
 
@@ -710,6 +709,9 @@ namespace CYS.Controllers
 			{
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+				kupekontrol(requestId, userObj.id);
+				agirlikOlcumKontrol(requestId, userObj.id);
+				
 
 				//tumKapilariKapa();
 				//Giriş Kapısını Açıyoruz
@@ -717,7 +719,7 @@ namespace CYS.Controllers
 
 				// 5 kg ve fazlası gelinceye kadar bekliyoruz....
 				double olculenDeger = 0.00;
-				while(olculenDeger < 20)
+				while(olculenDeger < 5)
 				{
 					//if(agirlikOlcumCounter > 10)
 					//{
@@ -725,10 +727,9 @@ namespace CYS.Controllers
 					//}
 
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(750).Wait();
-					agirlikOlcumCounter++;
+					//Task.Delay(750).Wait();
 				}
-				Task.Delay(500).Wait();
+				//Task.Delay(500).Wait();
 				//Nihai Ağırlık Ölçümü
 				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
 
@@ -790,38 +791,9 @@ namespace CYS.Controllers
 		}
 		public string rfidOlcumOtomatik(string requestId, int userId)
 		{
+
 			kupeatamaCTX hctx = new kupeatamaCTX();
-			KupeAtama eklenenId = null;
-			try
-			{
-				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId order by desc limit 1", new { requestId = requestId });
-			}
-			catch (Exception ex)
-			{
-				return "";
-
-			}
-			if (eklenenId == null)
-			{
-				eklenenId = new KupeAtama()
-				{
-					requestId = requestId,
-					userId = userId,
-					kupeRfid = ""
-				};
-				try
-				{
-					hctx.kupeAtamaEkle(eklenenId);
-
-				}
-				catch (Exception ex)
-				{
-					return "";
-
-				}
-				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId order by asc limit 1", new { requestId = requestId });
-			}
-
+			KupeAtama eklenenId = kupekontrol( requestId,  userId);
 			if (eklenenId == null)
 			{
 				return "";
@@ -833,41 +805,47 @@ namespace CYS.Controllers
 			hctx.kupeAtamaGuncelle(eklenenId);
 			return gelen;
 		}
-		public double agirlikOlcumOtomatik(string requestId, int userId)
+
+		public KupeAtama kupekontrol(string requestId, int userId)
 		{
-			AgirlikOlcum eklenenId = null;
-			AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
+			kupeatamaCTX hctx = new kupeatamaCTX();
+			KupeAtama eklenenId = null;
 			try
 			{
-				//bu request id ile eklenmiş veri var mı kontrolü
-				eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
-
+				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
 			}
 			catch (Exception ex)
 			{
-				return -0.00;
-			}
+				return null;
 
+			}
 			if (eklenenId == null)
 			{
-				AgirlikOlcum agirlik = new AgirlikOlcum()
+				eklenenId = new KupeAtama()
 				{
 					requestId = requestId,
 					userId = userId,
-					agirlikOlcumu = ""
+					tarih = DateTime.Now,
+					kupeRfid = ""
 				};
 				try
 				{
-					hctx.agirlikOlcumEkle(agirlik);
+					hctx.kupeAtamaEkle(eklenenId);
 
 				}
 				catch (Exception ex)
 				{
+					return null;
 
 				}
-				//Veri eklendikten sonra eklenen veri tekrar elde ediliyor
-				eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId order by id desc limit 1", new { requestId = requestId });
+				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
 			}
+			return eklenenId;
+		}
+		public double agirlikOlcumOtomatik(string requestId, int userId)
+		{
+			AgirlikOlcum eklenenId = agirlikOlcumKontrol(requestId, userId);
+			AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
 			double olcum;
 
 			var gelenCevap = webServisSorgu("/AgirlikApi");
@@ -883,6 +861,42 @@ namespace CYS.Controllers
 			return -0.00;
 
 
+		}
+
+		public AgirlikOlcum agirlikOlcumKontrol(string requestId, int userId)
+		{
+			AgirlikOlcum eklenenId = null;
+			AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
+			try
+			{
+				//bu request id ile eklenmiş veri var mı kontrolü
+				eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
+			}
+			catch (Exception ex)
+			{
+				return null;
+			}
+
+			if (eklenenId == null)
+			{
+				AgirlikOlcum agirlik = new AgirlikOlcum()
+				{
+					requestId = requestId,
+					userId = userId,
+					agirlikOlcumu = ""
+				};
+				try
+				{
+					hctx.agirlikOlcumEkle(agirlik);
+				}
+				catch (Exception ex)
+				{
+
+				}
+				//Veri eklendikten sonra eklenen veri tekrar elde ediliyor
+				eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
+			}
+			return eklenenId;
 		}
 		public void tumKapilariKapa()
 		{
@@ -906,9 +920,21 @@ namespace CYS.Controllers
 					var userObj = JsonConvert.DeserializeObject<User>(user);
 					var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
 					var client = new RestClient(profileObj.cihazLink + fonksiyon);
-					client.Timeout = 1000;
+					client.Timeout = 5000;
 					var request = new RestRequest(Method.GET);
 					IRestResponse response = client.Execute(request);
+					if(response.IsSuccessful == false)
+					{
+						sureclogCTX sctx = new sureclogCTX();
+						sureclog sl = new sureclog()
+						{
+							processId = 1,
+							fonksiyonAdi = fonksiyon,
+							sorguCevap = response.ErrorMessage.ToString(),
+							sorguSonucu = "error"
+						};
+						sctx.sureclogEkle(sl);
+					}
 					var cevap = response.Content;
 					//var gelen = JsonConvert.DeserializeObject<string>(cevap);
 					return cevap;
