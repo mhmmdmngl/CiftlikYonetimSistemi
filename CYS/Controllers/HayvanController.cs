@@ -803,6 +803,7 @@ namespace CYS.Controllers
 					sorguCevap = gelen,
 					fonksiyonAdi = "kupekontrol"
 				};
+				slctx.sureclogEkle(sl);
 				return gelen;
 
 			}
