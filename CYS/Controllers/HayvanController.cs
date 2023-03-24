@@ -742,7 +742,6 @@ namespace CYS.Controllers
 				{
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
 					Task.Delay(500).Wait();
-
 					rfidOlcumCounter++;
 				}
 				//rfid verisi geldi demek
