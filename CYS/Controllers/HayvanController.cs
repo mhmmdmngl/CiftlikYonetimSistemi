@@ -727,9 +727,8 @@ namespace CYS.Controllers
 					//}
 
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-					//Task.Delay(750).Wait();
+					Task.Delay(200).Wait();
 				}
-				Task.Delay(500).Wait();
 				//Nihai Ağırlık Ölçümü
 				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
 
