@@ -782,11 +782,7 @@ namespace CYS.Controllers
 				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
 
 			}
-
 			return Json(new { status = "error", message = "" });
-
-
-
 		}
 		public string rfidOlcumOtomatik(string requestId, int userId)
 		{
