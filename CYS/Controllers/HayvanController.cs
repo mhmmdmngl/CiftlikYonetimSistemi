@@ -729,7 +729,7 @@ namespace CYS.Controllers
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
 					//Task.Delay(750).Wait();
 				}
-				//Task.Delay(500).Wait();
+				Task.Delay(500).Wait();
 				//Nihai Ağırlık Ölçümü
 				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
 
@@ -738,13 +738,8 @@ namespace CYS.Controllers
 				cevap = webServisSorgu("/Secim?secenek=17");
 
 				string rfid = "";
-				while(rfid.Length < 3 || rfid == "")
+				while(rfid == "")
 				{
-					//if(rfidOlcumCounter > 10)
-					//{
-					//	return Json(new { status = "error", message = "RFID gelmedi" });
-					//}
-
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
 					rfidOlcumCounter++;
 				}
@@ -815,6 +810,15 @@ namespace CYS.Controllers
 			}
 			catch (Exception ex)
 			{
+				sureclogCTX slctx = new sureclogCTX();
+				sureclog sl = new sureclog()
+				{
+					processId = 1,
+					sorguSonucu = "Fonksiyon Hatası null döndü",
+					sorguCevap = ex.ToString(),
+					fonksiyonAdi = "kupekontrol"
+				};
+				slctx.sureclogEkle(sl);
 				return null;
 
 			}
@@ -834,8 +838,15 @@ namespace CYS.Controllers
 				}
 				catch (Exception ex)
 				{
-					return null;
-
+					sureclogCTX slctx = new sureclogCTX();
+					sureclog sl = new sureclog()
+					{
+						processId = 1,
+						sorguSonucu = "Fonksiyon Hatası null dönmedi",
+						sorguCevap = ex.ToString(),
+						fonksiyonAdi = "kupekontrol"
+					};
+					slctx.sureclogEkle(sl);
 				}
 				eklenenId = hctx.kupeAtamaTek("select * from kupeatama where requestId = @requestId", new { requestId = requestId });
 			}
@@ -873,6 +884,15 @@ namespace CYS.Controllers
 			}
 			catch (Exception ex)
 			{
+				sureclogCTX slctx = new sureclogCTX();
+				sureclog sl = new sureclog()
+				{
+					processId = 1,
+					sorguSonucu = "Fonksiyon Hatası null döndü",
+					sorguCevap = ex.ToString(),
+					fonksiyonAdi = "agirlikOlcumKontrol"
+				};
+				slctx.sureclogEkle(sl);
 				return null;
 			}
 
@@ -890,7 +910,15 @@ namespace CYS.Controllers
 				}
 				catch (Exception ex)
 				{
-
+					sureclogCTX slctx = new sureclogCTX();
+					sureclog sl = new sureclog()
+					{
+						processId = 1,
+						sorguSonucu = "Fonksiyon Hatası null dönmedi süreç devam etti",
+						sorguCevap = ex.ToString(),
+						fonksiyonAdi = "agirlikOlcumKontrol"
+					};
+					slctx.sureclogEkle(sl);
 				}
 				//Veri eklendikten sonra eklenen veri tekrar elde ediliyor
 				eklenenId = hctx.agirlikOlcumTek("select * from agirlikolcum where requestId = @requestId", new { requestId = requestId });
