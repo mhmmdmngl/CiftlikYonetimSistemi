@@ -726,15 +726,17 @@ namespace CYS.Controllers
 					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
 					//}
 
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					Task.Delay(200).Wait();
 				}
+				//Giriş Kapısı Kapanıyor...
+				cevap = webServisSorgu("/Secim?secenek=17");
 				//Nihai Ağırlık Ölçümü
-				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-				while(agirlikOlcumCounter < 5)
+				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
+				while(agirlikOlcumCounter < 3)
 				{
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
-					if (olculenDeger > 6)
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
+					if (olculenDeger > 5)
 						agirlikOlcumleri.Add(olculenDeger);
 					agirlikOlcumCounter++;
 				}
@@ -742,8 +744,7 @@ namespace CYS.Controllers
 				
 
 				agirlikOlcumCounter = 0;
-				//Giriş Kapısı Kapanıyor...
-				cevap = webServisSorgu("/Secim?secenek=17");
+				
 
 				string rfid = "";
 				while(rfid == "")
@@ -755,19 +756,20 @@ namespace CYS.Controllers
 				rfidOlcumCounter = 0;
 				//Yönlenirme kapısı açılıyor...
 				int kapanan = 18;
-				if(olculenDeger >5 && olculenDeger < 20)
-					cevap = webServisSorgu("/Secim?secenek=7");
-				else if (olculenDeger > 19 && olculenDeger < 40)
-				{
-					cevap = webServisSorgu("/Secim?secenek=8");
-					kapanan = 19;
-				}
-				else if (olculenDeger > 39 && olculenDeger < 1000)
-				{
-					cevap = webServisSorgu("/Secim?secenek=9");
-					kapanan = 20;
+				cevap = webServisSorgu("/Secim?secenek=7");
 
-				}
+				//if (olculenDeger >5 && olculenDeger < 20)
+				//else if (olculenDeger > 19 && olculenDeger < 40)
+				//{
+				//	cevap = webServisSorgu("/Secim?secenek=8");
+				//	kapanan = 19;
+				//}
+				//else if (olculenDeger > 39 && olculenDeger < 1000)
+				//{
+				//	cevap = webServisSorgu("/Secim?secenek=9");
+				//	kapanan = 20;
+
+				//}
 
 				//Hayvanın çıktığından emin olmak için  bekliyoruz.
 				while (olculenDeger > 5)
@@ -776,7 +778,7 @@ namespace CYS.Controllers
 					//{
 					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
 					//}
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id);
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					agirlikOlcumCounter++;
 					
 				}
@@ -868,7 +870,7 @@ namespace CYS.Controllers
 			}
 			return eklenenId;
 		}
-		public double agirlikOlcumOtomatik(string requestId, int userId)
+		public double agirlikOlcumOtomatik(string requestId, int userId, double olculenDeger)
 		{
 			AgirlikOlcum eklenenId = agirlikOlcumKontrol(requestId, userId);
 			AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
@@ -879,8 +881,12 @@ namespace CYS.Controllers
 			{
 				if(Double.TryParse(gelenCevap, out olcum))
 				{
-					eklenenId.agirlikOlcumu = olcum.ToString();
-					hctx.agirlikOlcumGuncelle(eklenenId);
+					if(olcum > olculenDeger)
+					{
+						eklenenId.agirlikOlcumu = olcum.ToString();
+						hctx.agirlikOlcumGuncelle(eklenenId);
+					}
+				
 					return olcum;
 				}
 			}

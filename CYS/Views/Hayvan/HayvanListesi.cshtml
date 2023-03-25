@@ -530,14 +530,20 @@
 					},
 					success: function (returnData) {
 						if (returnData["status"] == "success") {
-							Swal.fire({
-								text: returnData["message"],
-								icon: "success",
-								buttonsStyling: false,
-								customClass: {
-									confirmButton: "btn btn-primary"
-								}
-							});
+							//Swal.fire({
+							//	text: returnData["message"],
+							//	icon: "success",
+							//	buttonsStyling: false,
+							//	customClass: {
+							//		confirmButton: "btn btn-primary"
+							//	}
+							//});
+
+							guid = "";
+							document.getElementById("agirlikTxt").value = "";
+							document.getElementById("rfidTxt").value = "";
+							document.getElementById("tarihlbl").innerHTML= "";
+
 						}
 						else
 						{
