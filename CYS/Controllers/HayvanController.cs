@@ -779,6 +779,9 @@ namespace CYS.Controllers
 				}
 				Task.Delay(200);
 				cevap = webServisSorgu("/Secim?secenek="+kapanan);
+				Task.Delay(200);
+				cevap = webServisSorgu("/Secim?secenek=" + kapanan);
+
 				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
 
 			}
