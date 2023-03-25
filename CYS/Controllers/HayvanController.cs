@@ -726,21 +726,21 @@ namespace CYS.Controllers
 					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
 					//}
 
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger,"Giris");
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					//Task.Delay(200).Wait();
 				}
 				//Giriş Kapısı Kapanıyor...
-				//cevap = webServisSorgu("/Secim?secenek=17");
+				cevap = webServisSorgu("/Secim?secenek=17");
 				//Nihai Ağırlık Ölçümü
-				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger,"");
-				while(agirlikOlcumCounter < 3)
-				{
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger, "");
-					if (olculenDeger > 5)
-						agirlikOlcumleri.Add(olculenDeger);
-					agirlikOlcumCounter++;
-				}
-				AgirlikOlcum eklenenId = agirlikOlcumKontrol(requestId, userObj.id);
+				olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
+				//while(agirlikOlcumCounter < 3)
+				//{
+				//	olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
+				//	if (olculenDeger > 5)
+				//		agirlikOlcumleri.Add(olculenDeger);
+				//	agirlikOlcumCounter++;
+				//}
+				//AgirlikOlcum eklenenId = agirlikOlcumKontrol(requestId, userObj.id);
 				
 
 				agirlikOlcumCounter = 0;
@@ -773,12 +773,12 @@ namespace CYS.Controllers
 				while (olculenDeger > 5)
 				{
 
-					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger, "Cikis");
+					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					agirlikOlcumCounter++;
-					//Task.Delay(100);
+					Task.Delay(100);
 				}
 				
-				//cevap = webServisSorgu("/Secim?secenek="+kapanan);
+				cevap = webServisSorgu("/Secim?secenek="+kapanan);
 		
 
 				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
@@ -867,13 +867,13 @@ namespace CYS.Controllers
 			}
 			return eklenenId;
 		}
-		public double agirlikOlcumOtomatik(string requestId, int userId, double olculenDeger, string ekdeger)
+		public double agirlikOlcumOtomatik(string requestId, int userId, double olculenDeger)
 		{
 			AgirlikOlcum eklenenId = agirlikOlcumKontrol(requestId, userId);
 			AgirlikOlcumCTX hctx = new AgirlikOlcumCTX();
 			double olcum;
 
-			var gelenCevap = webServisSorgu("/AgirlikApi"+ekdeger);
+			var gelenCevap = webServisSorgu("/AgirlikApi");
 			if(gelenCevap != "-1")
 			{
 				if(Double.TryParse(gelenCevap, out olcum))
