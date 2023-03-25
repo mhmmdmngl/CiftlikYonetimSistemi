@@ -727,7 +727,7 @@ namespace CYS.Controllers
 					//}
 
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
-					Task.Delay(200).Wait();
+					//Task.Delay(200).Wait();
 				}
 				//Giriş Kapısı Kapanıyor...
 				cevap = webServisSorgu("/Secim?secenek=17");
