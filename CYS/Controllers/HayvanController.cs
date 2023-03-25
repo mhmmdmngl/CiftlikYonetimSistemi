@@ -750,7 +750,6 @@ namespace CYS.Controllers
 				while(rfid == "")
 				{
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
-					Task.Delay(50).Wait();
 				}
 				//rfid verisi geldi demek
 				rfidOlcumCounter = 0;
@@ -771,13 +770,9 @@ namespace CYS.Controllers
 
 				//}
 
-				//Hayvanın çıktığından emin olmak için  bekliyoruz.
 				while (olculenDeger > 5)
 				{
-					//if (agirlikOlcumCounter > 10)
-					//{
-					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
-					//}
+
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					agirlikOlcumCounter++;
 					
