@@ -776,7 +776,8 @@ namespace CYS.Controllers
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					agirlikOlcumCounter++;
 				}
-				
+				Task.Delay(100);
+
 				cevap = webServisSorgu("/Secim?secenek="+kapanan);
 		
 
