@@ -777,7 +777,7 @@ namespace CYS.Controllers
 					agirlikOlcumCounter++;
 					
 				}
-
+				Task.Delay(200);
 				cevap = webServisSorgu("/Secim?secenek="+kapanan);
 				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
 
