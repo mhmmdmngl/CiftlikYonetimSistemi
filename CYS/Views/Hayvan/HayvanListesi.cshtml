@@ -479,6 +479,7 @@
 	function basla()
 	{
 		processBegin = 1;
+		processFlag = 0;
 		process();
 	}
 
@@ -543,6 +544,8 @@
 							document.getElementById("agirlikTxt").value = "";
 							document.getElementById("rfidTxt").value = "";
 							document.getElementById("tarihlbl").innerHTML= "";
+							processFlag = 1;
+							basla();
 
 						}
 						else
@@ -560,11 +563,9 @@
 					}, 1500);
 
 						}
-						processFlag = 1;
 
 					}
 				});
-				processFlag = 1;
 			}
 		}
 
