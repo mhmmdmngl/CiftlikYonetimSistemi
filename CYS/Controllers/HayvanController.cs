@@ -770,7 +770,7 @@ namespace CYS.Controllers
 
 				//}
 
-				while (olculenDeger > 5)
+				while (olculenDeger > 10)
 				{
 
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
