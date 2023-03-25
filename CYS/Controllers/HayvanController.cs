@@ -719,7 +719,7 @@ namespace CYS.Controllers
 
 				// 5 kg ve fazlası gelinceye kadar bekliyoruz....
 				double olculenDeger = 0.00;
-				while(olculenDeger < 5)
+				while(olculenDeger < 2)
 				{
 					//if(agirlikOlcumCounter > 10)
 					//{
