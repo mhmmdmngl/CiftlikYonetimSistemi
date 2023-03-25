@@ -473,25 +473,12 @@
 		process();
 	}, 1000);
 
-	var agirlikOlcumInterval = setInterval(function () {
-					agirlikGetirTemiz();
-				}, 500);
-
-	var rfidInterval = setInterval(function () {
-					rfidGetirTemiz();
-
-	clearInterval(agirlikOlcumInterval);
-		clearInterval(rfidInterval);
-
-
-
 	
 
 
 	function basla()
 	{
 		processBegin = 1;
-		processFlag = 0;
 		process();
 	}
 
@@ -527,11 +514,11 @@
 			
 
 			if (processFlag == 0) {
-				agirlikOlcumInterval = setInterval(function () {
+					var agirlikOlcumInterval = setInterval(function () {
 					agirlikGetirTemiz();
 				}, 500);
 
-				rfidInterval = setInterval(function () {
+				var rfidInterval = setInterval(function () {
 					rfidGetirTemiz();
 				}, 1000);
 				$.ajax({
@@ -551,14 +538,11 @@
 							//		confirmButton: "btn btn-primary"
 							//	}
 							//});
-							clearInterval(agirlikOlcumInterval);
-							clearInterval(rfidInterval);
+
 							guid = "";
 							document.getElementById("agirlikTxt").value = "";
 							document.getElementById("rfidTxt").value = "";
 							document.getElementById("tarihlbl").innerHTML= "";
-							processFlag = 1;
-							basla();
 
 						}
 						else
