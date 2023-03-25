@@ -777,7 +777,8 @@ namespace CYS.Controllers
 					agirlikOlcumCounter++;
 					
 				}
-,				cevap = webServisSorgu("/Secim?secenek="+kapanan);
+				
+				cevap = webServisSorgu("/Secim?secenek="+kapanan);
 				Task.Delay(200);
 				cevap = webServisSorgu("/Secim?secenek=" + kapanan);
 
