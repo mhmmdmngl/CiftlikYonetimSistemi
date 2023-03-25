@@ -473,24 +473,12 @@
 		process();
 	}, 1000);
 
-	var agirlikOlcumInterval = setInterval(function () {
-		agirlikGetirTemiz();
-	}, 500);
-
-	var rfidInterval = setInterval(function () {
-		rfidGetirTemiz();
-	}, 500);
-
-	clearInterval(agirlikOlcumInterval);
-	clearInterval(rfidInterval);
-
 	
 
 
 	function basla()
 	{
 		processBegin = 1;
-		processFlag = 0;
 		process();
 	}
 
@@ -526,13 +514,13 @@
 			
 
 			if (processFlag == 0) {
-				agirlikOlcumInterval = setInterval(function () {
+					var agirlikOlcumInterval = setInterval(function () {
 					agirlikGetirTemiz();
 				}, 500);
 
-				rfidInterval = setInterval(function () {
+				var rfidInterval = setInterval(function () {
 					rfidGetirTemiz();
-				}, 500);
+				}, 1000);
 				$.ajax({
 					url: "/Hayvan/otomatiksurec",
 					dataType: "json",
@@ -551,12 +539,10 @@
 							//	}
 							//});
 
-							guid = "";
 							document.getElementById("agirlikTxt").value = "";
 							document.getElementById("rfidTxt").value = "";
 							document.getElementById("tarihlbl").innerHTML= "";
-							processFlag = 1;
-							basla();
+
 						}
 						else
 						{
