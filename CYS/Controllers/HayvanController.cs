@@ -770,7 +770,7 @@ namespace CYS.Controllers
 
 				//}
 
-				while (olculenDeger > 10)
+				while (olculenDeger > 5)
 				{
 
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
@@ -779,8 +779,7 @@ namespace CYS.Controllers
 				}
 				
 				cevap = webServisSorgu("/Secim?secenek="+kapanan);
-				Task.Delay(200);
-				cevap = webServisSorgu("/Secim?secenek=" + kapanan);
+		
 
 				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
 
