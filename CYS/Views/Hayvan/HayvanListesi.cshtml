@@ -547,7 +547,7 @@
 							//		confirmButton: "btn btn-primary"
 							//	}
 							//});
-							clearInterval(processInterval);
+							clearInterval(agirlikOlcumInterval);
 							clearInterval(rfidInterval);
 							window.setTimeout(function () {
 								
@@ -555,8 +555,11 @@
 							document.getElementById("agirlikTxt").value = "";
 							document.getElementById("rfidTxt").value = "";
 							document.getElementById("tarihlbl").innerHTML= "";
-							guid == "";
+							guid = "";
 							document.getElementById("guidId").value="";
+							window.setTimeout(function () {
+								
+							}, 500);
 							basla();
 
 						}
