@@ -1,8 +1,11 @@
 ﻿using CYS.Models;
 using CYS.Repos;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Build.ObjectModelRemoting;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Utilities;
 using RestSharp;
@@ -13,6 +16,12 @@ namespace CYS.Controllers
 {
 	public class HayvanController : Controller
 	{
+		IMemoryCache _memoryCache;
+
+		public HayvanController(IMemoryCache memoryCache)
+		{
+			_memoryCache = memoryCache;
+		}
 		public IActionResult Index()
 		{
 			return View();
@@ -162,7 +171,8 @@ namespace CYS.Controllers
 					agirlikHayvan ah = new agirlikHayvan()
 					{
 						hayvanId = hayvanVarMi.id,
-						agirlikId = hayvanVarMi.agirlik
+						agirlikId = hayvanVarMi.agirlik,
+						tarih = DateTime.Now
 					};
 					ahctx.agirlikHayvanEkle(ah);
 					return Json(new { status = "Success", message = "Mevcut Hayvan Başarıyla Güncellendi" });
@@ -183,7 +193,8 @@ namespace CYS.Controllers
 				agirlikHayvan ah1 = new agirlikHayvan()
 				{
 					hayvanId = eklenenson.id,
-					agirlikId = eklenenson.agirlik
+					agirlikId = eklenenson.agirlik,
+					tarih = DateTime.Now
 				};
 				ahctx1.agirlikHayvanEkle(ah1);
 
@@ -696,6 +707,24 @@ namespace CYS.Controllers
 			}
 			return Json("");
 		}
+		public JsonResult otomatiksurecIptal(string requestId)
+		{
+			surecCTX sctX = new surecCTX();
+			var requestIdVarMi = sctX.surecTek("select * from surec where requestId = @requestId", new { requestId = requestId });
+			if(requestId != null)
+			{
+				requestIdVarMi.tamamlandi = -1;
+				requestIdVarMi.tamamlanmaTarihi = DateTime.Now;
+				sctX.surecGuncelle(requestIdVarMi);
+				_memoryCache.Set(requestIdVarMi.requestId, -1, new MemoryCacheEntryOptions
+				{
+					AbsoluteExpiration = DateTime.Now.AddMinutes(2),
+					Priority = CacheItemPriority.Normal
+				});
+				return Json("");
+			}
+			return Json("");
+		}
 		public JsonResult otomatiksurec(string requestId)
 		{
 			if (requestId == null)
@@ -709,6 +738,31 @@ namespace CYS.Controllers
 			{
 				var userObj = JsonConvert.DeserializeObject<User>(user);
 				var profileObj = JsonConvert.DeserializeObject<Profile>(profile);
+				surecCTX sctx = new surecCTX();
+				var requestIdVarMi = sctx.surecTek("select * from surec where requestId = @requestId", new { requestId = requestId });
+				if(requestIdVarMi != null)
+				{
+					return Json(new { status = "error", message = "Bu request Id zaten Var...." });
+				}
+				else
+				{
+					surec sc = new surec()
+					{
+						requestId = requestId,
+						userId = userObj.id,
+						tarih = DateTime.Now,
+						tamamlandi = 0
+					};
+					sctx.surecEkle(sc);
+					requestIdVarMi = sctx.surecTek("select * from surec where requestId = @requestId", new { requestId = requestId });
+				}
+
+				_memoryCache.Set(requestIdVarMi.requestId, 0, new MemoryCacheEntryOptions
+				{
+					AbsoluteExpiration = DateTime.Now.AddMinutes(2),
+					Priority = CacheItemPriority.Normal
+				});
+
 				kupekontrol(requestId, userObj.id);
 				agirlikOlcumKontrol(requestId, userObj.id);
 				
@@ -725,7 +779,11 @@ namespace CYS.Controllers
 					//{
 					//	return Json(new { status = "error", message = "Ağırlık gelmedi" });
 					//}
-
+					int sonuc = Convert.ToInt32(_memoryCache.Get(requestId));
+					if(sonuc == -1)
+					{
+						return Json(new { status = "cancel", message = "Süreç İptal Edildi" });
+					}
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					//Task.Delay(200).Wait();
 				}
@@ -749,6 +807,11 @@ namespace CYS.Controllers
 				string rfid = "";
 				while(rfid == "")
 				{
+					int sonuc = Convert.ToInt32(_memoryCache.Get(requestId));
+					if (sonuc == -1)
+					{
+						return Json(new { status = "cancel", message = "Süreç İptal Edildi" });
+					}
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
 				}
 				//rfid verisi geldi demek
@@ -772,15 +835,26 @@ namespace CYS.Controllers
 
 				while (olculenDeger > 5)
 				{
-
+					int sonuc = Convert.ToInt32(_memoryCache.Get(requestId));
+					if (sonuc == -1)
+					{
+						return Json(new { status = "cancel", message = "Süreç İptal Edildi" });
+					}
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
 					agirlikOlcumCounter++;
 				}
 				Task.Delay(100);
 
 				cevap = webServisSorgu("/Secim?secenek="+kapanan);
-		
 
+				requestIdVarMi.tamamlandi = 1;
+				requestIdVarMi.tamamlanmaTarihi = DateTime.Now;
+				sctx.surecGuncelle(requestIdVarMi);
+				_memoryCache.Set(requestIdVarMi.requestId, 1, new MemoryCacheEntryOptions
+				{
+					AbsoluteExpiration = DateTime.Now.AddMinutes(2),
+					Priority = CacheItemPriority.Normal
+				});
 				return Json(new { status = "success", message = "Ölçüm Süreci Başarıyla Bitti" });
 
 			}

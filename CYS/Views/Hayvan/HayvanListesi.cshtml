@@ -482,30 +482,31 @@
 
 	clearInterval(processInterval);
 	clearInterval(rfidInterval);
+	clearInterval(agirlikOlcumInterval);
 
 
 	function tumKapilariKapat()
 	{
 		processBegin = 0;
 		processFlag = 1;
+		rfidFlag = 1;
+		$.ajax({
+			url: "/Hayvan/otomatiksurecIptal",
+			dataType: "json",
+			type: "POST",
+			async: true,
+			data: {
+				"requestId": guid
+			},
+			success: function (returnData) {
+				if (returnData["status"] == "error") {
+				}
+				else {
 
-		var gelen = kapiAc(17);
-		window.setTimeout(function () {
-								
-							}, 100);
-		gelen =kapiAc(18);
-		window.setTimeout(function () {
-								
-							}, 100);
-		gelen =kapiAc(19);
-		window.setTimeout(function () {
+				}
 
-		}, 100);
-		gelen =kapiAc(20);
-
-		window.setTimeout(function () {
-						window.location.href = "../../Hayvan/HayvanListesi";
-					}, 250);
+			}
+		});
 
 
 	}
@@ -589,6 +590,31 @@
 							}, 500);
 							basla();
 
+						}
+						else if(returnData["status"] == "cancel")
+						{
+							clearInterval(agirlikOlcumInterval);
+							clearInterval(rfidInterval);
+							window.setTimeout(function () {
+
+							}, 300);
+							document.getElementById("agirlikTxt").value = "";
+							document.getElementById("rfidTxt").value = "";
+							document.getElementById("tarihlbl").innerHTML = "";
+							guid = "";
+							document.getElementById("guidId").value = "";
+							rfidFlag = 0;
+							window.setTimeout(function () {
+
+							}, 500);
+							Swal.fire({
+								text: returnData["message"],
+								icon: "error",
+								buttonsStyling: false,
+								customClass: {
+									confirmButton: "btn btn-primary"
+								}
+							});
 						}
 						else
 						{
