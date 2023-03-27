@@ -782,6 +782,7 @@ namespace CYS.Controllers
 					int sonuc = Convert.ToInt32(_memoryCache.Get(requestId));
 					if(sonuc == -1)
 					{
+						tumKapilariKapa();
 						return Json(new { status = "cancel", message = "Süreç İptal Edildi" });
 					}
 					olculenDeger = agirlikOlcumOtomatik(requestId, userObj.id, olculenDeger);
@@ -810,6 +811,7 @@ namespace CYS.Controllers
 					int sonuc = Convert.ToInt32(_memoryCache.Get(requestId));
 					if (sonuc == -1)
 					{
+						tumKapilariKapa();
 						return Json(new { status = "cancel", message = "Süreç İptal Edildi" });
 					}
 					rfid = rfidOlcumOtomatik(requestId, userObj.id);
@@ -1021,13 +1023,13 @@ namespace CYS.Controllers
 		public void tumKapilariKapa()
 		{
 			var cevap = webServisSorgu("/Secim?secenek=17");
-			Task.Delay(1000).Wait();
+			Task.Delay(200).Wait();
 			cevap = webServisSorgu("/Secim?secenek=18");
-			Task.Delay(1000).Wait();
+			Task.Delay(200).Wait();
 			cevap = webServisSorgu("/Secim?secenek=19");
-			Thread.Sleep(1000);
+			Thread.Sleep(200);
 			cevap = webServisSorgu("/Secim?secenek=20");
-			Thread.Sleep(1000);
+			Thread.Sleep(200);
 		}
 		public string webServisSorgu(string fonksiyon)
 		{
