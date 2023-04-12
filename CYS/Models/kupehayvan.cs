@@ -4,7 +4,7 @@
 	{
 		public int id { get; set; }
 		public int hayvanId { get; set; }
-		public int kupeId { get; set; }
+		public string kupeId { get; set; }
 		public DateTime tarih { set; get; }
 
 

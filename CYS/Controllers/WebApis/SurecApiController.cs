@@ -10,25 +10,11 @@ namespace CYS.Controllers.WebApis
 	public class SurecApiController : ControllerBase
 	{
 		[HttpGet]
-		public surec surecBaslat(int userId)
+		public String surecBaslat(int userId)
 		{
 			surecCTX sctx = new surecCTX();
 			Guid id = Guid.NewGuid();
-			var idVarMi = sctx.surecTek("select * from surec where requestId = @requestId", new {requestId = id.ToString()});
-			if(idVarMi == null)
-			{
-				surec sc = new surec()
-				{
-					requestId = id.ToString(),
-					userId = userId,
-					tarih = DateTime.Now
-				};
-
-				var mevcut = sctx.surecTek("select * from surec where requestId = @requestId", new { requestId = id.ToString() });
-				return mevcut;
-
-			}
-			return null;
+			return id.ToString();
 
 		}
 
