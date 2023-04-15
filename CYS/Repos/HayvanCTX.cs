@@ -49,7 +49,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into hayvan (rfidKodu,kupeIsmi,cinsiyet,agirlik, userId, kategoriId) values (@rfidKodu,@kupeIsmi,@cinsiyet,@agirlik, @userId, @kategoriId)", hayvan);
+				var item = connection.Execute("insert into hayvan (rfidKodu,kupeIsmi,cinsiyet,agirlik, userId, kategoriId, requestId) values (@rfidKodu,@kupeIsmi,@cinsiyet,@agirlik, @userId, @kategoriId, @requestId)", hayvan);
 				return item;
 			}
 		}
@@ -58,7 +58,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update hayvan set rfidKodu = rfidKodu,kupeIsmi = @kupeIsmi,cinsiyet = @cinsiyet,agirlik = @agirlik, userId= @userId, kategoriId = @kategoriId, aktif = @aktif where id = @id", hayvan);
+				var item = connection.Execute("update hayvan set rfidKodu = rfidKodu,kupeIsmi = @kupeIsmi,cinsiyet = @cinsiyet,agirlik = @agirlik, userId= @userId, kategoriId = @kategoriId, aktif = @aktif, requestId = @requestId where id = @id", hayvan);
 				return item;
 			}
 		}

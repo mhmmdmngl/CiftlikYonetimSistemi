@@ -30,7 +30,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("insert into kupehayvan (hayvanId, kupeId) values (@hayvanId, @kupeId)", kriter);
+				var item = connection.Execute("insert into kupehayvan (hayvanId, kupeId, requestId) values (@hayvanId, @kupeId, @requestId)", kriter);
 				return item;
 			}
 		}
@@ -39,7 +39,7 @@ namespace CYS.Repos
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update kupehayvan set hayvanId = @hayvanId,kupeId=@kupeId, isActive = @isActive where id = @id", kriter);
+				var item = connection.Execute("update kupehayvan set hayvanId = @hayvanId,kupeId=@kupeId, isActive = @isActive, requestId = @requestId where id = @id", kriter);
 				return item;
 			}
 		}

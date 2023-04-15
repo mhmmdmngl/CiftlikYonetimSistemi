@@ -14,6 +14,7 @@
         public int kategoriId { get; set; }
 		public Kategori kategori { set; get; }
 		public List<HayvanKriterUnsur> ozellikler { get; set; }
+		public string requestId { set; get; }
 
-    }
+	}
 }
