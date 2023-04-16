@@ -10,7 +10,6 @@
 		public string requestId { set; get; }
 
 		public DateTime tarih { get; set; }
-		public string requestId { set; get; }
 
 
 	}

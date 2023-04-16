@@ -364,6 +364,9 @@
 												<!--begin::Menu-->
 												<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
 													<div class="menu-item px-3">
+														<a href="javascript:agirlikmodalAc(@item.id)" class="menu-link px-3">Ağırlık</a>
+													</div>
+													<div class="menu-item px-3">
 														<a href="javascript:modalAc(@item.id)"  class="menu-link px-3">Özellik Ekle</a>
 													</div>
 													<div class="menu-item px-3">
@@ -442,6 +445,7 @@
 @await Component.InvokeAsync("OzellikEkle")
 @await Component.InvokeAsync("UstSoy")
 @await Component.InvokeAsync("SoyGoster")
+@await Component.InvokeAsync("AgirlikModal")
 
 
 
@@ -912,6 +916,14 @@
 		document.getElementById("idHayvan").value = id;
 		hayvankriterunsur();
 		$("#kt_modal_add_user_ozellik").modal('show');
+
+	}
+
+	function agirlikmodalAc(id)
+	{
+			document.getElementById("idHayvan").value = id;
+			hayvanagirliklariGetir();
+		$("#kt_modal_add_user_agirlik").modal('show');
 
 	}
 

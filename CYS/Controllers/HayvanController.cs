@@ -1087,5 +1087,14 @@ namespace CYS.Controllers
 			double median = (size % 2 != 0) ? (double)sortedPNumbers[mid] : ((double)sortedPNumbers[mid] + (double)sortedPNumbers[mid - 1]) / 2;
 			return median;
 		}
+
+		public JsonResult agirlikHayvanListesi(int hayvanId)
+		{
+			AgirlikHayvanCTX ahctx = new AgirlikHayvanCTX();
+			var list = ahctx.agirlikHayvanList("select * from agirlikhayvan where hayvanId = @hayvanId order by tarih", new { hayvanId = hayvanId });
+			if (list.Count == 0)
+				return Json("");
+			return Json(JsonConvert.SerializeObject(list));
+		}
 	}
 }
