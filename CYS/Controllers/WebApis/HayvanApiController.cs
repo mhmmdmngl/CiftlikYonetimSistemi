@@ -24,14 +24,13 @@ namespace CYS.Controllers.WebApis
 		}
 
 		[HttpPost]
-		public postCevap hayvanEkle(string hayvan, string requestId)
+		public postCevap hayvanEkle(string rfidKodu, string kupeIsmi, string cinsiyet, string agirlik, int userId, int kategoriId, string requestId )
 		{
 			postCevap pc = new postCevap();
-			var hayvanNesne = JsonConvert.DeserializeObject<Hayvan>(hayvan);
 			HayvanCTX hctx = new HayvanCTX();
 			AgirlikHayvanCTX ahctx = new AgirlikHayvanCTX();
 			kupehayvanCTX kaCTX = new kupehayvanCTX();
-			var hayvanVarMi = hctx.hayvanTek("select * from Hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = hayvanNesne.rfidKodu });
+			var hayvanVarMi = hctx.hayvanTekSadece("select * from Hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = rfidKodu });
 			if(hayvanVarMi != null)
 			{
 				if(hayvanVarMi.requestId == requestId)
@@ -41,7 +40,14 @@ namespace CYS.Controllers.WebApis
 					pc.message = "Bu güncelleme zaten mevcut";
 					return pc;
 				}
-				var guncelle = hctx.hayvanGuncelle(hayvanNesne);
+				hayvanVarMi.rfidKodu = rfidKodu;
+				hayvanVarMi.kupeIsmi = kupeIsmi;
+				hayvanVarMi.cinsiyet = cinsiyet;
+				hayvanVarMi.agirlik = agirlik;
+				hayvanVarMi.userId = userId;
+				hayvanVarMi.kategoriId = kategoriId;
+				hayvanVarMi.requestId = requestId;
+				var guncelle = hctx.hayvanGuncelle(hayvanVarMi);
 				if(guncelle == 1)
 				{
 					pc.isSynced = 1;
@@ -51,7 +57,7 @@ namespace CYS.Controllers.WebApis
 					agirlikHayvan ah = new agirlikHayvan()
 					{
 						hayvanId = hayvanVarMi.id,
-						agirlikId = hayvanNesne.agirlik,
+						agirlikId = hayvanVarMi.agirlik,
 						requestId = requestId,
 						tarih = DateTime.Now
 
@@ -68,8 +74,18 @@ namespace CYS.Controllers.WebApis
 			}
 			else
 			{
-				var eklendiMi = hctx.hayvanEkle(hayvanNesne);
-				hayvanVarMi = hctx.hayvanTek("select * from hayvan where requestId = @requestId and aktif = 1", new { requestId = requestId });
+				Hayvan hy = new Hayvan()
+				{
+					rfidKodu = rfidKodu,
+					kupeIsmi = kupeIsmi,
+					cinsiyet = cinsiyet,
+					agirlik = agirlik,
+					userId = userId,
+					kategoriId = kategoriId,
+					requestId = requestId
+				};
+				var eklendiMi = hctx.hayvanEkle(hy);
+				hayvanVarMi = hctx.hayvanTekSadece("select * from hayvan where requestId = @requestId and aktif = 1", new { requestId = requestId });
 				if (eklendiMi == 1)
 				{
 					pc.isSynced = 1;
@@ -79,7 +95,7 @@ namespace CYS.Controllers.WebApis
 					agirlikHayvan ah = new agirlikHayvan()
 					{
 						hayvanId = hayvanVarMi.id,
-						agirlikId = hayvanNesne.agirlik,
+						agirlikId = hayvanVarMi.agirlik,
 						requestId = requestId,
 						tarih = DateTime.Now
 
@@ -101,6 +117,7 @@ namespace CYS.Controllers.WebApis
 				pc.message = "Bilinmeyen hata oluştu";
 				return pc;
 			}
+			return null;
 
 		}
 

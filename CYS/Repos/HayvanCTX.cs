@@ -23,6 +23,15 @@ namespace CYS.Repos
 				return list;
 			}
 		}
+		public List<Hayvan> hayvanListSadece(string sorgu, object param)
+		{
+			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
+			{
+				var list = connection.Query<Hayvan>(sorgu, param).ToList();
+				
+				return list;
+			}
+		}
 
 		public Hayvan hayvanTek(string sorgu, object param)
 		{
@@ -41,6 +50,21 @@ namespace CYS.Repos
 					item.ozellikler = hkuCTX.HayvanKriterUnsurList("select * from hayvankriterunsur where hayvanId = @hayvanId and isActive = 1", new { hayvanId = item.id });
 
 				}
+				return item;
+			}
+		}
+
+		public Hayvan hayvanTekSadece(string sorgu, object param)
+		{
+			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
+			{
+				var item = connection.Query<Hayvan>(sorgu, param).FirstOrDefault();
+				UserCTX uctx = new UserCTX();
+				HayvanKriterUnsurCTX hkuCTX = new HayvanKriterUnsurCTX();
+
+				KategoriCTX kctx = new KategoriCTX();
+
+				
 				return item;
 			}
 		}
