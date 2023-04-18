@@ -30,7 +30,7 @@ namespace CYS.Controllers.WebApis
 			HayvanCTX hctx = new HayvanCTX();
 			AgirlikHayvanCTX ahctx = new AgirlikHayvanCTX();
 			kupehayvanCTX kaCTX = new kupehayvanCTX();
-			var hayvanVarMi = hctx.hayvanTekSadece("select * from Hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = rfidKodu });
+			var hayvanVarMi = hctx.hayvanTekSadece("select * from hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = rfidKodu });
 			if(hayvanVarMi != null)
 			{
 				if(hayvanVarMi.requestId == requestId)
