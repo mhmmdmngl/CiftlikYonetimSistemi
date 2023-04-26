@@ -24,7 +24,7 @@ namespace CYS.Controllers.WebApis
 		}
 
 		[HttpPost]
-		public postCevap hayvanEkle(string rfidKodu, string kupeIsmi, string cinsiyet, string agirlik, int userId, int kategoriId, string requestId )
+		public postCevap hayvanEkle(string rfidKodu, string kupeIsmi, string cinsiyet, string agirlik, int userId, int kategoriId, string requestId, DateTime dt )
 		{
 			postCevap pc = new postCevap();
 			HayvanCTX hctx = new HayvanCTX();
@@ -33,9 +33,9 @@ namespace CYS.Controllers.WebApis
 			var hayvanVarMi = hctx.hayvanTekSadece("select * from hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = rfidKodu });
 			if(hayvanVarMi != null)
 			{
-				if(hayvanVarMi.requestId == requestId)
+				if(hayvanVarMi.requestId == requestId || hayvanVarMi.sonGuncelleme > dt)
 				{
-					pc.isSynced = 0;
+					pc.isSynced = -1;
 					pc.insertUpdate = 0;
 					pc.message = "Bu güncelleme zaten mevcut";
 					return pc;
@@ -66,7 +66,7 @@ namespace CYS.Controllers.WebApis
 					return pc;
 
 				}
-				pc.isSynced = -1;
+				pc.isSynced = 0;
 				pc.insertUpdate = -1;
 				pc.message = "Bilinmeyen hata oluştu";
 				return pc;

@@ -80,9 +80,10 @@ namespace CYS.Repos
 
 		public int hayvanGuncelle(Hayvan hayvan)
 		{
+			hayvan.sonGuncelleme = DateTime.Now;
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
-				var item = connection.Execute("update hayvan set rfidKodu = rfidKodu,kupeIsmi = @kupeIsmi,cinsiyet = @cinsiyet,agirlik = @agirlik, userId= @userId, kategoriId = @kategoriId, aktif = @aktif, requestId = @requestId where id = @id", hayvan);
+				var item = connection.Execute("update hayvan set rfidKodu = rfidKodu,kupeIsmi = @kupeIsmi,cinsiyet = @cinsiyet,agirlik = @agirlik, userId= @userId, kategoriId = @kategoriId, aktif = @aktif, requestId = @requestId, sonGuncelleme = @sonGuncelleme where id = @id", hayvan);
 				return item;
 			}
 		}
