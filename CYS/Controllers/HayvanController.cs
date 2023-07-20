@@ -40,6 +40,18 @@ namespace CYS.Controllers
 			ViewBag.kriterler = kriterListe();
 			return View(hayvanListesi);
 		}
+
+		public IActionResult BuyukBas()
+		{
+			if (sessionKontrol() == false)
+				return RedirectToAction("GirisYap", "Login");
+			HayvanCTX hctx = new HayvanCTX();
+			var user = HttpContext.Session.GetString("user");
+			agirliksuCTX aoctx = new agirliksuCTX();
+			var liste = aoctx.agirliksuList("select * from agirliksu order by id", null);
+			return View(liste);
+		}
+
 		public IActionResult HayvanEkle()
 		{
 			return View();
