@@ -38,7 +38,7 @@ namespace CYS.Repos
 			}
 		}
 
-		public int agirliksuEkle(Kriter kriter)
+		public int agirliksuEkle(agirliksu kriter)
 		{
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
