@@ -83,7 +83,7 @@
 						<div class="fv-row mb-4 row">
 							<div class="col-12">
 
-								<input type="button" onclick="tumKapilariKapat();" class="form-control  mb-3  btn btn-danger" value="Otomatik Süreç İptal" />
+								<input type="button" onclick="iptalEt();" class="form-control  mb-3  btn btn-danger" value="Otomatik Süreç İptal" />
 							</div>
 
 
@@ -135,6 +135,31 @@
 			.catch(error => {
 				// Handle any errors that might occur during the request
 				console.error("Error fetching GUID:", error);
+			});
+	}
+
+	function iptalEt() {
+		// Make the AJAX request to the /BuyukBasIslem/iptalEt endpoint
+		fetch("/BuyukBasIslem/iptalEt")
+			.then(response => response.json())
+			.then(data => {
+				// If the response is successful and returns "1" as JSON
+				if (data === "1") {
+					// Close the modal using Bootstrap's modal method
+					const modalElement = document.getElementById("kt_modal_add_user");
+					const bootstrapModal = new bootstrap.Modal(modalElement);
+					bootstrapModal.hide();
+
+					// You can perform any additional actions here after a successful request
+					console.log("Request was successful. Modal closed.");
+				} else {
+					// Handle the case if the response is not as expected
+					console.error("Unexpected response:", data);
+				}
+			})
+			.catch(error => {
+				// Handle any errors that might occur during the request
+				console.error("Error during request:", error);
 			});
 	}
 </script>
