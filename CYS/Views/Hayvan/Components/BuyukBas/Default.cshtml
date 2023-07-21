@@ -125,7 +125,17 @@
 
 <script>
 	function basla() {
-		
+		// Make the AJAX request to the /api/BuyukBas endpoint
+		fetch("/api/BuyukBas")
+			.then(response => response.text())
+			.then(guid => {
+				// Once the response is received, set the value of the input field with id "guidId"
+				document.getElementById("guidId").value = guid;
+			})
+			.catch(error => {
+				// Handle any errors that might occur during the request
+				console.error("Error fetching GUID:", error);
+			});
 	}
 </script>
 
