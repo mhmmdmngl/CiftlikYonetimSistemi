@@ -11,70 +11,104 @@ namespace CYS.Controllers.WebApis
 	public class BuyukBasAgirlikController : ControllerBase
 	{
 		[HttpGet]
-		public int Post(string eid, string baslangicAgirligi, string sonAgirlik)
+		public int Post(string eid, string baslangicAgirligi, string sonAgirlik, string hayvangirdi, string hayvancikti)
 		{
+			
 			processsettingCTX processsettingCTX = new processsettingCTX();
 			var ps = processsettingCTX.processsettingTek("select * from processsetting where id =1", null);
-			agirliksuCTX agirliksuCTX = new agirliksuCTX();
-			var mevcutguiddeVarMi = agirliksuCTX.agirliksuTek("select * from agirliksu where requestId = @requestId", ps.mevcutRequest);
+			agirliksuCTX asuctx = new agirliksuCTX();
+			var mevcutguiddeVarMi = asuctx.agirliksuTek("select * from agirliksu where reqestId = @requestId", new { requestId = ps.mevcutRequest } );
 			Hayvan ilgiliHayvan = null;
+			if (ps.mevcutRequest == "")
+				return -1;
+			if (hayvangirdi != "-1")
+			{
+				mevcutguiddeVarMi = new agirliksu()
+				{
+					hayvanId = -1,
+					reqestId = ps.mevcutRequest,
+					ilkOlcum = "-1",
+					sonOlcum = "-1",
+					userId = 1,
+					tarih = DateTime.Now,
+					hayvangirdi = 1
+				};
+				asuctx.agirliksuEkle(mevcutguiddeVarMi);
+				return 1;
+			}
+
+			if (hayvancikti != "-1")
+			{
+				mevcutguiddeVarMi.hayvancikti = 1;
+				asuctx.agirliksuGuncelle(mevcutguiddeVarMi);
+				return 1;
+			}
 			if (eid != "" && baslangicAgirligi == "0" && sonAgirlik == "0")
 			{
-				if (mevcutguiddeVarMi == null)
+				HayvanCTX hctx = new HayvanCTX();
+				ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = eid });
+				if (ilgiliHayvan == null)
 				{
-					HayvanCTX hctx = new HayvanCTX();
-					ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = eid });
-					if (ilgiliHayvan == null)
+					var toplamHayvanSayisi = hctx.hayvanListSadece("select id from Hayvan where aktif = 1", null);
+					ilgiliHayvan = new Hayvan()
 					{
-						var toplamHayvanSayisi = hctx.hayvanList("select id from Hayvan where aktif = 1", null);
-						ilgiliHayvan = new Hayvan()
-						{
-							cinsiyet = "Bilinmiyor",
-							kategoriId = -1,
-							kupeIsmi = "TRK-" + DateTime.Now.ToString("dd.MM.yyyy") + "-" + (toplamHayvanSayisi.Count + 1).ToString(),
-							rfidKodu = eid,
-							agirlik = "0",
-							sonGuncelleme = DateTime.Now,
-							requestId = ps.mevcutRequest
-						};
-						hctx.hayvanEkle(ilgiliHayvan);
-						ilgiliHayvan = hctx.hayvanTek("select * from Hayvan where rfidKodu = @eid", new { eid = eid });
-					}
-					mevcutguiddeVarMi = new agirliksu()
-					{
-						hayvanId = ilgiliHayvan.id,
+						cinsiyet = "Bilinmiyor",
+						kategoriId = -1,
+						kupeIsmi = "TRK-" + DateTime.Now.ToString("dd.MM.yyyy") + "-" + (toplamHayvanSayisi.Count + 1).ToString(),
+						rfidKodu = eid,
+						agirlik = "0",
+						sonGuncelleme = DateTime.Now,
 						requestId = ps.mevcutRequest,
-						ilkOlcum = "-1",
-						sonOlcum = "-1",
-						userId = 1,
-						tarih = DateTime.Now
-
+						aktif = 1
 					};
-					agirliksuCTX.agirliksuEkle(mevcutguiddeVarMi);
-					return 1;
+					hctx.hayvanEkle(ilgiliHayvan);
+					mevcutguiddeVarMi.hayvanui = 1;
+					ilgiliHayvan = hctx.hayvanTek("select * from Hayvan where rfidKodu = @eid", new { eid = eid });
 				}
+				else
+				{
+					ilgiliHayvan.requestId = ps.mevcutRequest;
+					ilgiliHayvan.sonGuncelleme = DateTime.Now;
+					mevcutguiddeVarMi.hayvanui = 2;
+					hctx.hayvanGuncelle(ilgiliHayvan);
+
+				}
+				mevcutguiddeVarMi.hayvanId = ilgiliHayvan.id;
+				mevcutguiddeVarMi.ilkOlcum = "-1";
+				mevcutguiddeVarMi.sonOlcum = "-1";
+				mevcutguiddeVarMi.userId = 1;
+				mevcutguiddeVarMi.tarih = DateTime.Now;
+				asuctx.agirliksuGuncelle(mevcutguiddeVarMi);
+				return 1;
 			}
 			else if (eid != "" && baslangicAgirligi != "0")
 			{
-				var varMi = agirliksuCTX.agirliksuTek("select * from agirliksu where requestId = @requestId", new { requestId = ps.mevcutRequest });
+				var varMi = asuctx.agirliksuTek("select * from agirliksu where reqestId = @requestId", new { requestId = ps.mevcutRequest });
+				HayvanCTX hctx = new HayvanCTX();
+				ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = eid });
 				if (varMi != null)
 				{
 					varMi.ilkOlcum = baslangicAgirligi;
-					agirliksuCTX.agirliksuGuncelle(varMi);
+					asuctx.agirliksuGuncelle(varMi);
+					ilgiliHayvan.agirlik = baslangicAgirligi;
+					ilgiliHayvan.sonGuncelleme = DateTime.Now;
+
+					hctx.hayvanGuncelle(ilgiliHayvan);
 					return 1;
 				}
 			}
 			else if (eid != "" && sonAgirlik != "0")
 			{
-				var varMi = agirliksuCTX.agirliksuTek("select * from agirliksu where requestId = @requestId", new { requestId = ps.mevcutRequest });
+				var varMi = asuctx.agirliksuTek("select * from agirliksu where reqestId = @requestId", new { requestId = ps.mevcutRequest });
+				HayvanCTX hctx = new HayvanCTX();
+				ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = eid });
 				if (varMi != null)
 				{
 					varMi.sonOlcum = sonAgirlik;
-					agirliksuCTX.agirliksuGuncelle(varMi);
-
-					ps.mevcutRequest = "";
-					ps.islemModu = 0;
-					processsettingCTX.processtypeGuncelle(ps);
+					asuctx.agirliksuGuncelle(varMi);
+					ilgiliHayvan.sonGuncelleme = DateTime.Now;
+					ilgiliHayvan.agirlik = baslangicAgirligi;
+					hctx.hayvanGuncelle(ilgiliHayvan);
 					return 1;
 				}
 			}

@@ -30,7 +30,9 @@ namespace CYS.Controllers
 		public JsonResult olcum(string requestId)
 		{
 			agirliksuCTX agirliksuCTX = new agirliksuCTX();
-			var mevcut = agirliksuCTX.agirliksuTek("select * from agirliksu where requestId = @requestId", new {requestId = requestId});
+			processsettingCTX processsettingCTX = new processsettingCTX();
+			var mevcutp = processsettingCTX.processsettingTek("select * from processsetting where id = 1", null);
+			var mevcut = agirliksuCTX.agirliksuTek("select * from agirliksu where reqestId = @requestId limit 1", new {requestId = mevcutp.mevcutRequest});
 			if (mevcut == null)
 				return Json("");
 			else
