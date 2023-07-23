@@ -189,6 +189,8 @@
 									<th class="min-w-125px">Alt Tür</th>
 									<th class="min-w-125px">Önceki Ağırlık</th>
 									<th class="min-w-125px">Son Ağırlık</th>
+									<th class="min-w-125px">Fark</th>
+
 									<th class="text-end min-w-100px">İşlemler</th>
 								</tr>
 								<!--end::Table row-->
@@ -214,9 +216,25 @@
 												<!--end::Role=-->
 												<!--begin::Last login=-->
 												<td>
+													
 													<div class="badge badge-light fw-bolder">@item.hayvan.kupeIsmi</div>
 												</td>
-												<td>@item.hayvan.cinsiyet</td>
+												<td>@{
+														@item.hayvan.kategori.kategoriAdi
+
+													}
+												</td>
+												<td>@item.ilkOlcum</td>
+												<td>@item.sonOlcum</td>
+												<td>
+													@{
+														if (Convert.ToDouble(item.ilkOlcum) > 0 && Convert.ToDouble(item.sonOlcum) > 0)
+														{
+															double fark = Convert.ToDouble(item.sonOlcum) - Convert.ToDouble(item.ilkOlcum);
+															<span class="bullet bullet-dot bg-success me-4">@fark</span>
+														}
+													}
+												</td>
 
 												<!--end::Last login=-->
 												<!--begin::Action=-->

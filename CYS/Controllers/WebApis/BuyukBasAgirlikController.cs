@@ -46,15 +46,18 @@ namespace CYS.Controllers.WebApis
 			if (eid != "" && baslangicAgirligi == "0" && sonAgirlik == "0")
 			{
 				HayvanCTX hctx = new HayvanCTX();
-				ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = eid });
+				ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu and aktif = 1", new { rfidKodu = eid });
 				if (ilgiliHayvan == null)
 				{
-					var toplamHayvanSayisi = hctx.hayvanListSadece("select id from Hayvan where aktif = 1", null);
+					int toplam = 0;
+					var toplamHayvanSayisi = hctx.hayvanListSadece("select id from Hayvan", null);
+					if (toplamHayvanSayisi != null)
+						toplam = toplamHayvanSayisi.Count;
 					ilgiliHayvan = new Hayvan()
 					{
 						cinsiyet = "Bilinmiyor",
 						kategoriId = -1,
-						kupeIsmi = "TRK-" + DateTime.Now.ToString("dd.MM.yyyy") + "-" + (toplamHayvanSayisi.Count + 1).ToString(),
+						kupeIsmi = "TRK-" + DateTime.Now.ToString("dd.MM.yyyy") + "-" + (toplam + 1).ToString(),
 						rfidKodu = eid,
 						agirlik = "0",
 						sonGuncelleme = DateTime.Now,
@@ -63,7 +66,17 @@ namespace CYS.Controllers.WebApis
 					};
 					hctx.hayvanEkle(ilgiliHayvan);
 					mevcutguiddeVarMi.hayvanui = 1;
+
 					ilgiliHayvan = hctx.hayvanTek("select * from Hayvan where rfidKodu = @eid", new { eid = eid });
+					kupehayvanCTX kupehayvanCTX = new kupehayvanCTX();
+					kupehayvan kh = new kupehayvan()
+					{
+						hayvanId = ilgiliHayvan.id,
+						kupeId = eid,
+						requestId = ps.mevcutRequest,
+						tarih = DateTime.Now
+					};
+					kupehayvanCTX.kupehayvanEkle(kh);
 				}
 				else
 				{
@@ -86,6 +99,7 @@ namespace CYS.Controllers.WebApis
 				var varMi = asuctx.agirliksuTek("select * from agirliksu where reqestId = @requestId", new { requestId = ps.mevcutRequest });
 				HayvanCTX hctx = new HayvanCTX();
 				ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @rfidKodu", new { rfidKodu = eid });
+				
 				if (varMi != null)
 				{
 					varMi.ilkOlcum = baslangicAgirligi;
@@ -94,6 +108,15 @@ namespace CYS.Controllers.WebApis
 					ilgiliHayvan.sonGuncelleme = DateTime.Now;
 
 					hctx.hayvanGuncelle(ilgiliHayvan);
+					AgirlikHayvanCTX agirlikHayvanCTX = new AgirlikHayvanCTX();
+					agirlikHayvan ah = new agirlikHayvan()
+					{
+						agirlikId = baslangicAgirligi,
+						hayvanId = ilgiliHayvan.id,
+						requestId = ps.mevcutRequest,
+						tarih = DateTime.Now
+					};
+					agirlikHayvanCTX.agirlikHayvanEkle(ah);
 					return 1;
 				}
 			}
@@ -109,6 +132,15 @@ namespace CYS.Controllers.WebApis
 					ilgiliHayvan.sonGuncelleme = DateTime.Now;
 					ilgiliHayvan.agirlik = baslangicAgirligi;
 					hctx.hayvanGuncelle(ilgiliHayvan);
+					AgirlikHayvanCTX agirlikHayvanCTX = new AgirlikHayvanCTX();
+					agirlikHayvan ah = new agirlikHayvan()
+					{
+						agirlikId = sonAgirlik,
+						hayvanId = ilgiliHayvan.id,
+						requestId = ps.mevcutRequest,
+						tarih = DateTime.Now
+					};
+					agirlikHayvanCTX.agirlikHayvanEkle(ah);
 					return 1;
 				}
 			}
