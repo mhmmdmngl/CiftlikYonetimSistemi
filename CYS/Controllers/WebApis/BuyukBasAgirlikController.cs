@@ -67,7 +67,7 @@ namespace CYS.Controllers.WebApis
 					hctx.hayvanEkle(ilgiliHayvan);
 					mevcutguiddeVarMi.hayvanui = 1;
 
-					ilgiliHayvan = hctx.hayvanTek("select * from Hayvan where rfidKodu = @eid", new { eid = eid });
+					ilgiliHayvan = hctx.hayvanTek("select * from hayvan where rfidKodu = @eid", new { eid = eid });
 					kupehayvanCTX kupehayvanCTX = new kupehayvanCTX();
 					kupehayvan kh = new kupehayvan()
 					{
