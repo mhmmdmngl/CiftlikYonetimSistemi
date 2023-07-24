@@ -146,15 +146,15 @@
 		if(intervalId != -1 && iptal == 0)
 			clearInterval(intervalId);
 
-		hayvangirdi = 0;
-		hayvancikti = 0;
-		kupe = 0;
 		setTimeout(() => {
 			fetch("/api/BuyukBas")
 				.then(response => response.text())
 				.then(guid => {
 					// Once the response is received, set the value of the input field with id "guidId"
 					document.getElementById("guidId").value = guid;
+					hayvangirdi = 0;
+					hayvancikti = 0;
+					kupe = 0;
 					getOlcumContinuously(guid);
 				})
 				.catch(error => {
@@ -252,7 +252,6 @@
 								kupe = 1;
 								document.getElementById("rfidTxt").value = parsedData.hayvan.rfidKodu;
 								Toast("Küpe Okundu");
-
 							}
 						}
 						if (parsedData.hayvanui == 1 && hayvanui == 0) {
