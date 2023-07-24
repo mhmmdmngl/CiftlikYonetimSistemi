@@ -215,12 +215,24 @@
 												<!--begin::User=-->
 												<!--end::Role=-->
 												<!--begin::Last login=-->
+												<td>@item.id</td>
 												<td>
 													
 													<div class="badge badge-light fw-bolder">@item.hayvan.kupeIsmi</div>
 												</td>
 												<td>@{
-														@item.hayvan.kategori.kategoriAdi
+														if(item.hayvan.kategoriId != -1)
+														{
+															@item.hayvan.kategori.kategoriAdi
+
+														}
+														else
+														{
+															<div class="d-flex align-items-center text-danger fs-4">
+																Belli Değil
+															</div>
+
+														}
 
 													}
 												</td>
@@ -231,7 +243,9 @@
 														if (Convert.ToDouble(item.ilkOlcum) > 0 && Convert.ToDouble(item.sonOlcum) > 0)
 														{
 															double fark = Convert.ToDouble(item.sonOlcum) - Convert.ToDouble(item.ilkOlcum);
-															<span class="bullet bullet-dot bg-success me-4">@fark</span>
+															<div class="d-flex align-items-center text-success fs-4">
+																@fark
+															</div>
 														}
 													}
 												</td>
