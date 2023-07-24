@@ -135,6 +135,13 @@
 
 	let hayvangirdi = 0;
 	let hayvancikti = 0;
+
+	let hayvanui = 0;
+	let kupe = 0;
+	let ilkagirlik = 0;
+	let sonagirlik = 0;
+
+
 	function basla() {
 		clearAllTextFields();
 		if(intervalId != -1 && iptal == 0)
@@ -215,11 +222,7 @@
 
 	function getOlcumContinuously(requestId) {
 
-		let hayvanui = 0;
-		let kupe = 0;
-		let ilkagirlik = 0;
-		let sonagirlik = 0;
-		let intervalId;
+
 
 		// Function to make the AJAX request and handle the response
 		function makeRequest() {
@@ -252,28 +255,24 @@
 								kupe = 1;
 								document.getElementById("rfidTxt").value = parsedData.hayvan.rfidKodu;
 								Toast("Küpe Okundu");
-								setTimeout(function () {
-								}, 1000);
+
 							}
 						}
 						if (parsedData.hayvanui == 1 && hayvanui == 0) {
 							hayvanui = 1;
 							Toast("yeni hayvan kaydedildi");
-							setTimeout(function () {
-							}, 1000);
+
 						}
 						if (parsedData.hayvanui == 2 && hayvanui == 0) {
 							hayvanui = 1;
 							Toast("Var olan Hayvan Güncellendi");
-							setTimeout(function () {
-							}, 1000);
+
 						}
 						if (parsedData.ilkOlcum !== "-1" && ilkagirlik == 0) {
 							Toast("Hayvanın ilk Ağırlığı " + parsedData.ilkOlcum + " KG olarak ölçüldü");
 							document.getElementById("ilkAgirlikTxt").value = parsedData.ilkOlcum;
 							ilkagirlik = 1;
-							setTimeout(function () {
-							}, 1000);
+
 						}
 						if (parsedData.sonOlcum !== "-1" && sonagirlik == 0) {
 							Toast("Hayvanın son Ağırlığı " + parsedData.sonOlcum + " KG olarak ölçüldü." );
