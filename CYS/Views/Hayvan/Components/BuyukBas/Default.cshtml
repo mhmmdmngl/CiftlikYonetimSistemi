@@ -222,8 +222,6 @@
 
 	function getOlcumContinuously(requestId) {
 
-
-
 		// Function to make the AJAX request and handle the response
 		function makeRequest() {
 			fetch(`/BuyukBasIslem/olcum?requestId=${requestId}`)
@@ -305,7 +303,7 @@
 		makeRequest();
 
 		// Set the interval to make continuous requests every 5 seconds (you can adjust the interval as needed)
-		intervalId = setInterval(makeRequest, 750);
+		intervalId = setInterval(makeRequest, 1500);
 
 		// Optional: If you want to stop the continuous requests after a certain time (e.g., 1 minute), you can use setTimeout
 		// Uncomment the following lines if you need to stop the requests after a specific duration
