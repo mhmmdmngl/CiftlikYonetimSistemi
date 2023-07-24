@@ -50,7 +50,7 @@ namespace CYS.Controllers.WebApis
 				if (ilgiliHayvan == null)
 				{
 					int toplam = 0;
-					var toplamHayvanSayisi = hctx.hayvanListSadece("select id from Hayvan", null);
+					var toplamHayvanSayisi = hctx.hayvanListSadece("select id from hayvan", null);
 					if (toplamHayvanSayisi != null)
 						toplam = toplamHayvanSayisi.Count;
 					ilgiliHayvan = new Hayvan()
