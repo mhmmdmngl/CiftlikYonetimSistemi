@@ -21,7 +21,6 @@
 					<!-- Form with beautiful textbox and button -->
 					<div action="col-md-3"></div>
 					<div action="col-md-6">
-
 						<form>
 							<div class="form-group">
 								<label for="exampleTextbox">İstek Bilgisi:</label>
@@ -29,11 +28,17 @@
 							</div>
 							<div class="form-group">
 								<label for="exampleTextbox">Eşik Ağırlık Girin:</label>
-								<input type="text" class="form-control form-control-lg rounded" id="exampleTextbox" placeholder="KG cinsinden Ağırlık">
+								<input type="text" class="form-control form-control-lg rounded" id="agirlikTXT" placeholder="KG cinsinden Ağırlık">
+							</div>
+							<div class="form-group">
+								<label for="exampleTextbox">Ölçülen Ağırlık</label>
+								<input type="text" class="form-control form-control-lg rounded" id="txtOlculen" placeholder="Ölçülen Ağırlık">
 							</div>
 							<br />
-							<button type="button" class="btn btn-success">Tare Başlat</button>
-							<button type="button" class="btn btn-danger">Ağırlık Gönder</button>
+							<button type="button" class="btn btn-primary" onclick="agirlikOlc();">Ağırlık Test</button>
+
+							<button type="button" class="btn btn-success" onclick="basla();">Tare Başlat</button>
+							<button type="button" class="btn btn-danger" onclick="agirlikGonder();">Ağırlık Gönder</button>
 
 						</form>
 
@@ -54,38 +59,14 @@
 	@await Component.InvokeAsync("Footer")
 </div>
 
-<script>
-	// Wait for the document to be ready
-	$(document).ready(function () {
-		// Handle click event for "Tare Başlat" button
-		$("#tareBaslatBtn").click(function () {
-			// Get the value from the textbox
-			var weight = $("#exampleTextbox").val();
 
-			// Make the AJAX request
-			$.ajax({
-				url: "../../Tare/tareBaslat", // Replace with your actual API endpoint URL
-				method: "POST", // Use "POST" or "GET" depending on your API requirements
-				data: { islemModu: 51 },
-				success: function (response) {
-					// Handle the successful response from the server, if needed
-					console.log("AJAX request successful:", response);
-				},
-				error: function (error) {
-					// Handle any errors that occur during the AJAX request
-					console.error("AJAX request error:", error);
-				}
-			});
-		});
-	});
-</script>
 
 <script>
 	let intervalId = -1; // Variable to store the interval ID
 	let Tare3 = 0;
 	let Tare4 = 0;
 	let Tare5 = 0;
-	
+	let islemModu = -1;
 
 	let isRequesting = false;
 
@@ -93,12 +74,16 @@
 	function basla() {
 
 		setTimeout(() => {
+			islemModu = 51;
 			fetch("../../Tare/tareBaslat")
 				.then(response => response.text())
 				.then(guid => {
 					// Once the response is received, set the value of the input field with id "guidId"
-					document.getElementById("requestId").value = guid;
-					getOlcumContinuously(guid);
+					document.getElementById("requestId").value = guid.replace(/"/g, '');
+					Tare3 = 0;
+					Tare4 = 0;
+					Tare5=0;
+					getOlcumContinuously(guid.replace(/"/g, ''));
 				})
 				.catch(error => {
 					// Handle any errors that might occur during the request
@@ -107,6 +92,88 @@
 		}, 100); // Adjust the delay time as needed (in milliseconds)
 	}
 
+	function agirlikGonder() {
+		let agirlik = document.getElementById("agirlikTXT").value;
+		if(agirlik == "" )
+		{
+			alert("Ağırlık girin");
+			return;
+		}
+		$.ajax({
+			url: "../../Tare/agirlikGonder", // Replace with your actual API endpoint URL
+			method: "POST", // Use "POST" or "GET" depending on your API requirements
+			data: { agirlik: agirlik },
+			success: function (response) {
+				// Handle the successful response from the server, if needed
+				console.log("AJAX request successful:", response);
+			},
+			error: function (error) {
+				// Handle any errors that occur during the AJAX request
+				console.error("AJAX request error:", error);
+			}
+		});
+	}
+
+	function tareModuDegis(islem)
+	{
+		$.ajax({
+			url: "../../Tare/ModDegistir", // Replace with your actual API endpoint URL
+			method: "POST", // Use "POST" or "GET" depending on your API requirements
+			data: { islemModu: islem },
+			success: function (response) {
+				// Handle the successful response from the server, if needed
+				console.log("AJAX request successful:", response);
+			},
+			error: function (error) {
+				// Handle any errors that occur during the AJAX request
+				console.error("AJAX request error:", error);
+			}
+		});
+
+	}
+
+	function agirlikOlc()
+	{
+		
+		let mevcutguid = document.getElementById("requestId").value;
+		if(mevcutguid == "")
+		{
+			Toast("Önce Tare İşlemi Başlatın",2);
+
+			return;
+		}
+
+		// Delay the execution of the function for 2000 milliseconds (2 seconds)
+		setTimeout(function () {
+		}, 1500);
+		  
+		setTimeout(() => {
+			fetch("../../Tare/enSonAgirlik")
+				.then(response => response.text())
+				.then(guid => {
+					if (guid.replace(/"/g, '') != "") {
+						Toast("Ölçülen Ağırlık: " + guid.replace(/"/g, '') + " KG");
+						document.getElementById("txtOlculen").value = guid.replace(/"/g, '');
+						
+
+					}
+					else
+					{
+						document.getElementById("txtOlculen").value = "";
+						
+
+					}
+				})
+				.catch(error => {
+					// Handle any errors that might occur during the request
+					console.error("Error fetching GUID:", error);
+				});
+		}, 100); // Adjust the delay time as needed (in milliseconds)
+
+
+
+
+	}
 	function getOlcumContinuously(requestId) {
 
 		// Function to make the AJAX request and handle the response
@@ -119,23 +186,24 @@
 					if (data !== "") {
 						// Parse the JSON data received from the server
 						const parsedData = JSON.parse(data);
-						if (parsedData.Tare3 == 1 && Tare3 == 0) {
+						if (parsedData.tare3 == 1 && Tare3 == 0) {
 							Tare3 = 1;
 							// Show toast notification for hayvan giriş
-							Toast("Tare Alındı");
+							Toast("Tare Alındı. Ağırlık Girip Göndermeniz gerekmektedir");
 							return;
 						}
-						if (parsedData.Tare4 == 1 && Tare4 == 0) {
+						if (parsedData.tare4 == 1 && Tare4 == 0) {
 							Tare4 = 1;
 							// Show toast notification for hayvan çıkış
 							Toast("İşlem Sonlandı");
 							clearInterval(intervalId);
 						}
 
-						if (parsedData.Tare5 == 1 && Tare5 == 0) {
+						if (parsedData.tare5 == 1 && Tare5 == 0) {
 							Tare5 = 1;
 							// Show toast notification for hayvan çıkış
 							Toast("Eşik Ağırlık Yollanıyor");
+							islemModu = 52;
 						}
 						
 					} else {
@@ -167,13 +235,13 @@
 	}
 
 	// Define a custom Toast function using Bootstrap's toast component
-	function Toast(message) {
+	function Toast(message, type = 1) {
 		// Set the options that I want
 		toastr.options = {
 			"closeButton": true,
 			"newestOnTop": false,
 			"progressBar": true,
-			"positionClass": "toast-top-center",
+			"positionClass": "toast-top-right",
 			"preventDuplicates": false,
 			"onclick": null,
 			"showDuration": "300",
@@ -185,8 +253,14 @@
 			"showMethod": "fadeIn",
 			"hideMethod": "fadeOut"
 		}
+		if(type == 1)
+			toastr.success(message);
+		else if(type == 2)
+			toastr.error(message);
+		else if(type == 3)
+			toastr.warning(message);
 
-		toastr.success(message);
+
 
 	}
 

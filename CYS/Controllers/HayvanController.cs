@@ -72,6 +72,8 @@ namespace CYS.Controllers
 			ViewBag.HayvanId = hayvanId;
 			HayvanCTX hctx = new HayvanCTX();
 			var hayvan = hctx.hayvanTek("select * from hayvan where id = @id", new { id = hayvanId });
+			ViewBag.list = hayvanTurListe();
+
 			return View(hayvan);
 		}
 		bool sessionKontrol()
@@ -257,7 +259,7 @@ namespace CYS.Controllers
 			return Json(new { status = "Error", message = "Bir Hata Oluştu" });
 
 		}
-		public JsonResult HayvanDuzenleJson(string hayvanId, string rfid, string hayvanAdi, string agirlik, int cinsiyet)
+		public JsonResult HayvanDuzenleJson(string hayvanId, string rfid, string hayvanAdi, string agirlik, int cinsiyet, int kategoriId)
 		{
 			var user = HttpContext.Session.GetString("user");
 			var profile = HttpContext.Session.GetString("profile");
@@ -278,12 +280,16 @@ namespace CYS.Controllers
 				}
 				HayvanCTX hctx = new HayvanCTX();
 				var hayvan = hctx.hayvanTek("select * from hayvan where id = @id", new { id = hayvanId });
+				int eklenecekKategoriId = hayvan.kategoriId;
+				if (kategoriId != -1)
+					eklenecekKategoriId = kategoriId;
 				if(hayvan != null)
 				{
 					hayvan.rfidKodu = rfid;
 					hayvan.agirlik = agirlik;
 					hayvan.cinsiyet = cinsiyetS;
 					hayvan.kupeIsmi = hayvanAdi;
+					hayvan.kategoriId = eklenecekKategoriId;
 					hctx.hayvanGuncelle(hayvan);
 					return Json(new { status = "Success", message = "Hayvan Başarıyla Güncellendi" });
 				}

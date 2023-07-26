@@ -2,6 +2,7 @@
 using CYS.Repos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 
 namespace CYS.Controllers.WebApis
 {
@@ -11,17 +12,23 @@ namespace CYS.Controllers.WebApis
 	{
 		// GET: api/<RFIDApiController>
 		[HttpGet]
-		public IEnumerable<string> Get()
+		public string Get(float agirlik)
 		{
-			return new string[] { "123", "value2" };
+			processsettingCTX processsetting = new processsettingCTX();
+			var mevcutps = processsetting.processsettingTek("select * from processsetting where id = 1", null);
+			AgirlikOlcumCTX agirlikCTX = new AgirlikOlcumCTX();
+			AgirlikOlcum kam = new AgirlikOlcum()
+			{
+				agirlikOlcumu = agirlik.ToString(),
+				userId = 1,
+				tarih = DateTime.Now,
+				requestId = mevcutps.mevcutRequest
+			};
+			agirlikCTX.agirlikOlcumEkle(kam);
+			return "1";
+
 		}
 
-		// GET api/<RFIDApiController>/5
-		[HttpGet("{id}")]
-		public string Get(int id)
-		{
-			return "value";
-		}
 
 		// POST api/<RFIDApiController>
 		[HttpPost]

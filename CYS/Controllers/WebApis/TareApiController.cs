@@ -10,52 +10,55 @@ namespace CYS.Controllers.WebApis
 	[ApiController]
 	public class TareApiController : ControllerBase
 	{
-		[HttpPost]
+		[HttpGet]
 		public string Get(int islemModu)
 		{
 			processsettingCTX settingCTX = new processsettingCTX();
-			var mevcutRequest = settingCTX.processsettingTek("select * from processsetting where id = 1", null);
+			var mevcutps = settingCTX.processsettingTek("select * from processsetting where id = 1", null);
+
+			KantarAyariRepo kaCTX = new KantarAyariRepo();
+			var mevcutKantar = kaCTX.KantarAyariTek("select * from kantarayari where requestId = @requestId", new { requestId = mevcutps.mevcutRequest });
 			if (islemModu == 51)
 			{
-
-				KantarAyariRepo kaCTX = new KantarAyariRepo();
-				KantarAyari ka = new KantarAyari()
-				{
-					RequestId = mevcutRequest.mevcutRequest,
-					Tare3 = 1,
-					Tarih = DateTime.Now
-				};
-				kaCTX.KantarAyariEkle(ka);
+				mevcutKantar.requestId = mevcutps.mevcutRequest;
+				mevcutKantar.tare3 =1;
+				mevcutKantar.tarih = DateTime.Now;
+				
+				kaCTX.KantarAyariGuncelle(mevcutKantar);
 			}
 			else if (islemModu == 53)
 			{
-				var mevcutps = settingCTX.processsettingTek("select * from processsetting where id = 1", null);
-
-				KantarAyariRepo kaCTX = new KantarAyariRepo();
-				var mevcutKantar = kaCTX.KantarAyariTek("select * from kantarayari where requestId = @requestId", new { requestId = mevcutps.mevcutRequest });
 				if (mevcutKantar != null)
 				{
-					mevcutKantar.Tare5 = 1;
+					mevcutKantar.tare5 = 1;
 					kaCTX.KantarAyariGuncelle(mevcutKantar);
 				}
 			}
 
 			else if (islemModu == 52)
 			{
-				var mevcutps = settingCTX.processsettingTek("select * from processsetting where id = 1", null);
 
-				KantarAyariRepo kaCTX = new KantarAyariRepo();
-				var mevcutKantar = kaCTX.KantarAyariTek("select * from kantarayari where requestId = @requestId", new { requestId = mevcutps.mevcutRequest });
 				if (mevcutKantar != null)
 				{
-					mevcutKantar.Tare4 = 1;
+					mevcutKantar.tare4 = 1;
 					kaCTX.KantarAyariGuncelle(mevcutKantar);
 				}
 				
 			}
+			else if (islemModu == 53)
+			{
+
+				if (mevcutKantar != null)
+				{
+					mevcutKantar.tare5 = 1;
+					kaCTX.KantarAyariGuncelle(mevcutKantar);
+				}
+
+			}
 			else if(islemModu == 99)
 			{
 
+				return mevcutKantar.esikagirlik;
 			}
 
 
