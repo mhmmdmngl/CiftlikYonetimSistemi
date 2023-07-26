@@ -136,15 +136,17 @@
 	let kupe = 0;
 	let hayvangirdi = 0;
 	let hayvancikti = 0;
+	let ilkmi = 1;
 
-
-
+	let isRequesting = false;
 
 
 	function basla() {
 		clearAllTextFields();
 		if(intervalId != -1 && iptal == 0)
+		{
 			clearInterval(intervalId);
+		}
 
 		setTimeout(() => {
 			fetch("/api/BuyukBas")
@@ -155,6 +157,7 @@
 					hayvangirdi = 0;
 					hayvancikti = 0;
 					kupe = 0;
+					isRequesting = false;
 					getOlcumContinuously(guid);
 				})
 				.catch(error => {
@@ -198,24 +201,11 @@
 
 	function safeIptal()
 	{
-		fetch("/BuyukBasIslem/iptalEt")
-			.then(response => response.json())
-			.then(data => {
-				// If the response is successful and returns "1" as JSON
-				if (data === "1") {
-					return 1;
-
-				} else {
-					// Handle the case if the response is not as expected
-					console.error("Unexpected response:", data);
-					return 2;
-
-				}
-			})
-			.catch(error => {
-				// Handle any errors that might occur during the request
-				console.error("Error during request:", error);
-			});
+		hayvangirdi = 0;
+		hayvancikti = 0;
+		kupe = 0;
+		clearInterval(intervalId);
+		basla();
 	}
 
 	// Assuming you have a `Toast` function that displays toast notifications
@@ -224,6 +214,7 @@
 
 		// Function to make the AJAX request and handle the response
 		function makeRequest() {
+
 			fetch(`/BuyukBasIslem/olcum?requestId=${requestId}`)
 				.then((response) => response.json())
 				.then((data) => {
@@ -235,15 +226,16 @@
 							hayvangirdi = 1;
 							// Show toast notification for hayvan giriş
 							Toast("Hayvan giriş yaptı");
+							isRequesting = false;
 							return;
 						}
 						if (parsedData.hayvancikti == 1 && hayvancikti == 0) {
-							hayvancikti = 1;
-							
+							hayvancikti = 1;			
 							// Show toast notification for hayvan çıkış
 							Toast("Hayvan çıkış yaptı, 2 saniye bekleyin...");
-
+							isRequesting = false;
 							basla();
+							
 						}
 						if(parsedData.hayvan != null )
 						{
@@ -252,23 +244,29 @@
 								kupe = 1;
 								document.getElementById("rfidTxt").value = parsedData.hayvan.rfidKodu;
 								Toast("Küpe Okundu");
+								isRequesting = false;
+								return;
+
 							}
 						}
 						if (parsedData.hayvanui == 1 && hayvanui == 0) {
 							hayvanui = 1;
 							Toast("yeni hayvan kaydedildi");
-
+							isRequesting = false;
+							return;
 						}
 						if (parsedData.hayvanui == 2 && hayvanui == 0) {
 							hayvanui = 1;
 							Toast("Var olan Hayvan Güncellendi");
-
+							isRequesting = false;
+							return;
 						}
 						if (parsedData.ilkOlcum !== "-1" && ilkagirlik == 0) {
 							Toast("Hayvanın ilk Ağırlığı " + parsedData.ilkOlcum + " KG olarak ölçüldü");
 							document.getElementById("ilkAgirlikTxt").value = parsedData.ilkOlcum;
 							ilkagirlik = 1;
-
+							isRequesting = false;
+							return;
 						}
 						if (parsedData.sonOlcum !== "-1" && sonagirlik == 0) {
 							Toast("Hayvanın son Ağırlığı " + parsedData.sonOlcum + " KG olarak ölçüldü." );
@@ -277,9 +275,10 @@
 							document.getElementById("sonAgirlikTxt").value = parsedData.sonOlcum;
 
 							setTimeout(function () {
-							}, 250);
+							}, 1000);
 							Toast("Hayvanın Çıkması Bekleniyor");
 
+							isRequesting = false;
 							return;
 							//clearInterval(intervalId);
 						}
@@ -287,12 +286,17 @@
 						// Perform any actions with the parsed data here
 						console.log("Received data:", parsedData);
 					} else {
+
 						clearAllTextFields();
+						isRequesting = false;
+						return;
 					}
 				})
 				.catch((error) => {
 					// Handle any errors that might occur during the request
 					console.error("Error during request:", error);
+					isRequesting = false;
+					return;
 				});
 		}
 
@@ -300,7 +304,7 @@
 		makeRequest();
 
 		// Set the interval to make continuous requests every 5 seconds (you can adjust the interval as needed)
-		intervalId = setInterval(makeRequest, 1500);
+		intervalId = setInterval(makeRequest, 500);
 
 		// Optional: If you want to stop the continuous requests after a certain time (e.g., 1 minute), you can use setTimeout
 		// Uncomment the following lines if you need to stop the requests after a specific duration

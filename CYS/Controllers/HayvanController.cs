@@ -48,7 +48,7 @@ namespace CYS.Controllers
 			HayvanCTX hctx = new HayvanCTX();
 			var user = HttpContext.Session.GetString("user");
 			agirliksuCTX aoctx = new agirliksuCTX();
-			var liste = aoctx.agirliksuList("select * from agirliksu order by id", null);
+			var liste = aoctx.agirliksuList("select * from agirliksu order by id desc", null);
 			return View(liste);
 		}
 
