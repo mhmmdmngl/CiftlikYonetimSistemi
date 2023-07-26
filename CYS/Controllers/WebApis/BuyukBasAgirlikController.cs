@@ -131,7 +131,7 @@ namespace CYS.Controllers.WebApis
 					varMi.sonOlcum = sonAgirlik;
 					asuctx.agirliksuGuncelle(varMi);
 					ilgiliHayvan.sonGuncelleme = DateTime.Now;
-					ilgiliHayvan.agirlik = baslangicAgirligi;
+					ilgiliHayvan.agirlik = sonAgirlik;
 					hctx.hayvanGuncelle(ilgiliHayvan);
 					AgirlikHayvanCTX agirlikHayvanCTX = new AgirlikHayvanCTX();
 					agirlikHayvan ah = new agirlikHayvan()
