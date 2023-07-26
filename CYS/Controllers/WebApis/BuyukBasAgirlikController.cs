@@ -62,6 +62,7 @@ namespace CYS.Controllers.WebApis
 						agirlik = "0",
 						sonGuncelleme = DateTime.Now,
 						requestId = ps.mevcutRequest,
+						userId = 1,
 						aktif = 1
 					};
 					hctx.hayvanEkle(ilgiliHayvan);
