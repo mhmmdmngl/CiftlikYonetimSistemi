@@ -203,7 +203,7 @@
 									{
 										if (item.hayvan != null)
 										{
-											DateTime tarih = item.tarih.AddHours(3);
+											DateTime tarih = item.tarih;
 
 											<tr>
 												<!--begin::Checkbox-->
@@ -254,13 +254,12 @@
 
 												<!--end::Last login=-->
 												<!--begin::Action=-->
-												<td>@tarih</td>
+												<td>@item.tarih</td>
 
 												<!--end::Action=-->
 											</tr>
 
 										}
-
 
 									}
 								}
