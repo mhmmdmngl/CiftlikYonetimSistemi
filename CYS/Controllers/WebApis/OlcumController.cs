@@ -13,7 +13,7 @@ namespace CYS.Controllers.WebApis
 		public string Get()
 		{
 			olcumSessionCTX olcumSession = new olcumSessionCTX();
-			Guid sessionId = new Guid();
+			Guid sessionId = Guid.NewGuid();
 			olcumSession os = new olcumSession()
 			{
 				sessionGuid = sessionId.ToString(),
