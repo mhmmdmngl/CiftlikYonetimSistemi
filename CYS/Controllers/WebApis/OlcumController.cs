@@ -10,17 +10,27 @@ namespace CYS.Controllers.WebApis
     public class OlcumController : ControllerBase
     {
 		[HttpGet]
-		public string Get()
+		public string Get(int last = 0)
 		{
 			olcumSessionCTX olcumSession = new olcumSessionCTX();
-			Guid sessionId = Guid.NewGuid();
-			olcumSession os = new olcumSession()
+			if (last == 0)
 			{
-				sessionGuid = sessionId.ToString(),
-				tarih = DateTime.Now
-			};
-			olcumSession.insert(os);
-			return sessionId.ToString();
+				
+				Guid sessionId = Guid.NewGuid();
+				olcumSession os = new olcumSession()
+				{
+					sessionGuid = sessionId.ToString(),
+					tarih = DateTime.Now
+				};
+				olcumSession.insert(os);
+				return sessionId.ToString();
+			}
+			else
+			{
+				var enson = olcumSession.olcumTek("select * from olcumSession order by desc limit 1", null);
+				return enson.sessionGuid;
+			}
+			
 
 		}
 	}

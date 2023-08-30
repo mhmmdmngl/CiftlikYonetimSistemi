@@ -1,0 +1,34 @@
+﻿using CYS.Models;
+using CYS.Repos;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CYS.Controllers.WebApis
+{
+	[Route("api/[controller]")]
+	[ApiController]
+	public class SayController : ControllerBase
+	{
+		[HttpGet]
+		public string Get(string guid)
+		{
+			olcumCTX olcum = new olcumCTX();
+			olcumSessionCTX olcumSession = new olcumSessionCTX();
+			var mevcut = olcumSession.olcumTek("select * from olcumSession where sessionGuid = @guid", new { guid = guid});
+			if(mevcut != null)
+			{
+				var varmi = olcum.olcumTek("select * from olcum where olcumSessionId = @olcumSessionId", new { olcumSessionId = mevcut.id });
+				if(varmi != null)
+				{
+					varmi.adet = varmi.adet + 1;
+					olcum.update(varmi);
+					return varmi.adet.ToString();
+				}
+
+			}
+			return "";
+
+
+		}
+	}
+}
