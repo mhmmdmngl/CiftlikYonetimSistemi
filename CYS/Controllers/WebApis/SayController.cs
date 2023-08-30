@@ -21,8 +21,17 @@ namespace CYS.Controllers.WebApis
 				if(varmi != null)
 				{
 					varmi.adet = varmi.adet + 1;
+					varmi.sonGuncelleme = DateTime.Now;
 					olcum.update(varmi);
+					
 					return varmi.adet.ToString();
+				}
+				else
+				{
+					olcum olc = new olcum();
+					olc.adet = 1;
+					olc.olcumSessionId = mevcut.id;
+					olc.sonGuncelleme = DateTime.Now;
 				}
 
 			}
