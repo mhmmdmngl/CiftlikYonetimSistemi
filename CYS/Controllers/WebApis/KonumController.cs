@@ -17,7 +17,8 @@ namespace CYS.Controllers.WebApis
 			{
 				cihazId = cihazId,
 				att = att,
-				lang = lang
+				lang = lang,
+				tarih = DateTime.Now
 			};
 			kctx.insert(knm);
 			return "1";
