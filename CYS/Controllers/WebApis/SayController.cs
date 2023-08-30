@@ -32,6 +32,8 @@ namespace CYS.Controllers.WebApis
 					olc.adet = 1;
 					olc.olcumSessionId = mevcut.id;
 					olc.sonGuncelleme = DateTime.Now;
+					olcum.insert(olc);
+					return "1";
 				}
 
 			}
