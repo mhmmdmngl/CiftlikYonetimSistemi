@@ -1,6 +1,7 @@
 ﻿using CYS.Models;
 using Dapper;
 using MySql.Data.MySqlClient;
+using System.Collections.Generic;
 
 namespace CYS.Repos
 {
@@ -11,6 +12,11 @@ namespace CYS.Repos
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
 				var list = connection.Query<olcum>(sorgu, param).ToList();
+				olcumSessionCTX osCTX = new olcumSessionCTX();
+				foreach(var item in list)
+				{
+					item.olcumSession = osCTX.olcumTek("select * from olcumsession where id = @id", new { id = item.olcumSessionId });
+				}
 				
 				return list;
 			}
@@ -21,7 +27,12 @@ namespace CYS.Repos
 			using (var connection = new MySqlConnection("Server=localhost;Database=cys;User Id=root;Password=Muhamm3d!1;"))
 			{
 				var item = connection.Query<olcum>(sorgu, param).FirstOrDefault();
+				olcumSessionCTX osCTX = new olcumSessionCTX();
 
+				if (item != null)
+				{
+					item.olcumSession = osCTX.olcumTek("select * from olcumsession where id = @id", new { id = item.olcumSessionId });
+				}
 				return item;
 			}
 		}
