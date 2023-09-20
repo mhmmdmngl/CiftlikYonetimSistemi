@@ -27,7 +27,7 @@ namespace CYS.Controllers.WebApis
 			}
 			else
 			{
-				var enson = olcumSession.olcumTek("select * from olcumsession order by desc limit 1", null);
+				var enson = olcumSession.olcumTek("select * from olcumSession order by desc limit 1", null);
 				return enson.sessionGuid;
 			}
 			

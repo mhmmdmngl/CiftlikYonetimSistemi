@@ -14,7 +14,7 @@ namespace CYS.Controllers.WebApis
 		{
 			olcumCTX olcum = new olcumCTX();
 			olcumSessionCTX olcumSession = new olcumSessionCTX();
-			var mevcut = olcumSession.olcumTek("select * from olcumsession where sessionGuid = @guid", new { guid = guid});
+			var mevcut = olcumSession.olcumTek("select * from olcumSession where sessionGuid = @guid", new { guid = guid});
 			if(mevcut != null)
 			{
 				var varmi = olcum.olcumTek("select * from olcum where olcumSessionId = @olcumSessionId", new { olcumSessionId = mevcut.id });
