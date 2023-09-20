@@ -13,6 +13,8 @@ namespace CYS.Controllers.WebApis
 		public string Get(string att, string lang, int cihazId)
 		{
 			konumCTX kctx = new konumCTX();
+			lang = lang.Trim('-');
+
 			konum knm = new konum()
 			{
 				cihazId = cihazId,
