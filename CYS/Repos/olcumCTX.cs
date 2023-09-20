@@ -15,7 +15,7 @@ namespace CYS.Repos
 				olcumSessionCTX osCTX = new olcumSessionCTX();
 				foreach(var item in list)
 				{
-					item.olcumSession = osCTX.olcumTek("select * from olcumSession where id = @id", new { id = item.olcumSessionId });
+					item.olcumSession = osCTX.olcumTek("select * from olcumsession where id = @id", new { id = item.olcumSessionId });
 				}
 				
 				return list;
@@ -31,7 +31,7 @@ namespace CYS.Repos
 
 				if (item != null)
 				{
-					item.olcumSession = osCTX.olcumTek("select * from olcumSession where id = @id", new { id = item.olcumSessionId });
+					item.olcumSession = osCTX.olcumTek("select * from olcumsession where id = @id", new { id = item.olcumSessionId });
 				}
 				return item;
 			}
